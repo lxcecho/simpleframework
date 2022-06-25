@@ -11,7 +11,7 @@
 	都会自动扫描加入到IOC容器中。 -->
 	<!-- <context:component-scan base-package="com.xc.annotaion"></context:component-scan> -->
 	
-	<bean id="persion" class="com.xc.justforjoy.annotation.bean.Person">
+	<bean id="persion" class="com.xc.joy.annotation.bean.Person">
 		<property name="name" value="zhangsan"></property>
 		<property name="age" value="21"></property>
 	</bean>
