@@ -1,0 +1,22 @@
+package com.xc.justforjoy.annotation.condition;
+
+import org.springframework.context.annotation.ImportSelector;
+import org.springframework.core.type.AnnotationMetadata;
+
+//自定义罗返回需要导入的组件
+public class MyImportSelector implements ImportSelector{
+
+	
+	/*
+	 * 返回值，就是要导入到容器中的组件全类名
+	 * AnnotationMetadata:当前标注@Import注解的类的所有注解信息。
+	 */
+	@Override
+	public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+		// TODO Auto-generated method stub
+		
+		//方法不要返回null值
+		return new String[] {"com.xc.justforjoy.annotation.bean.Blue","com.xc.justforjoy.annotation.bean.Yellow"};
+	}
+
+}
