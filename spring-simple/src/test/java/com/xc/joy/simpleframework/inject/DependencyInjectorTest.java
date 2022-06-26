@@ -1,9 +1,10 @@
 package com.xc.joy.simpleframework.inject;
 
-import com.xc.joy.casedemo.controller.frontend.MainPageController;
-import com.xc.joy.casedemo.service.combine.impl.HeadLineShopCategoryCombineServiceImpl;
-import com.xc.joy.casedemo.service.combine.impl.HeadLineShopCategoryCombineServiceImpl2;
-import com.xc.joy.simpleframework.core.BeanContainer;
+import com.xc.joy.offer.casedemo.controller.frontend.MainPageController;
+import com.xc.joy.offer.casedemo.service.combine.impl.HeadLineShopCategoryCombineServiceImpl;
+import com.xc.joy.offer.casedemo.service.combine.impl.HeadLineShopCategoryCombineServiceImpl2;
+import com.xc.joy.offer.simpleframework.core.BeanContainer;
+import com.xc.joy.offer.simpleframework.inject.DependencyInjector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,10 @@
 package com.xc.joy.simpleframework.core;
 
-import com.xc.joy.casedemo.controller.frontend.MainPageController;
-import com.xc.joy.casedemo.service.solo.HeadLineService;
-import com.xc.joy.casedemo.service.solo.impl.HeadLineServiceImpl;
-import com.xc.joy.simpleframework.core.annotation.Controller;
+import com.xc.joy.offer.casedemo.controller.frontend.MainPageController;
+import com.xc.joy.offer.casedemo.service.solo.HeadLineService;
+import com.xc.joy.offer.casedemo.service.solo.impl.HeadLineServiceImpl;
+import com.xc.joy.offer.simpleframework.core.BeanContainer;
+import com.xc.joy.offer.simpleframework.core.annotation.Controller;
 import org.junit.jupiter.api.*;
 
 

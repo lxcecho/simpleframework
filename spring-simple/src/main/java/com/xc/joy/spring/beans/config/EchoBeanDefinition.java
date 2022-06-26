@@ -5,7 +5,9 @@ package com.xc.joy.spring.beans.config;
  * @since 23:49 25-06-2022
  */
 public class EchoBeanDefinition {
+
     private String factoryBeanName;
+
     private String beanClassName;
 
     public String getFactoryBeanName() {

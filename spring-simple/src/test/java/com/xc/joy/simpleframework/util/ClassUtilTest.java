@@ -1,5 +1,6 @@
 package com.xc.joy.simpleframework.util;
 
+import com.xc.joy.offer.simpleframework.util.ClassUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
