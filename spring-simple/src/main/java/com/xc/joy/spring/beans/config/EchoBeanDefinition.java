@@ -25,4 +25,5 @@ public class EchoBeanDefinition {
     public void setBeanClassName(String beanClassName) {
         this.beanClassName = beanClassName;
     }
+
 }

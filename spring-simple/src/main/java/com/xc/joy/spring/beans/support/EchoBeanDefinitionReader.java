@@ -24,7 +24,7 @@ public class EchoBeanDefinitionReader {
     public EchoBeanDefinitionReader(String... configLocations) {
         doLoadConfig(configLocations[0]);
 
-        //扫描配置文件中的配置的相关的类
+        // 扫描配置文件中的配置的相关的类
         doScanner(contextConfig.getProperty("scanPackage"));
     }
 
@@ -39,8 +39,7 @@ public class EchoBeanDefinitionReader {
             for (String className : regitryBeanClasses) {
                 Class<?> beanClass = Class.forName(className);
 
-                // 保存类对应的 ClassName（全类名）
-                // 还有 beanName
+                // 保存类对应的 ClassName（全类名），还有 beanName
                 // 1、默认是类名首字母小写
                 result.add(doCreateBeanDefinition(toLowerFirstCase(beanClass.getSimpleName()), beanClass.getName()));
                 // 2、自定义

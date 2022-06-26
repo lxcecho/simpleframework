@@ -61,7 +61,7 @@ public class EchoApplicationContext {
      */
     private void doAutowired() {
         // 调用 getBean()
-        //这一步，所有的 Bean 并没有真正的实例化，还只是配置阶段
+        // 这一步，所有的 Bean 并没有真正的实例化，还只是配置阶段
         for (Map.Entry<String, EchoBeanDefinition> beanDefinitionEntry : this.beanDefinitionMap.entrySet()) {
             String beanName = beanDefinitionEntry.getKey();
             getBean(beanName);

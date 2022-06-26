@@ -105,11 +105,11 @@ public class EchoDispatcherServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
 
-        //初始化Spring核心IoC容器
+        // 初始化 Spring 核心 IoC 容器
         applicationContext = new EchoApplicationContext(config.getInitParameter("contextConfigLocation"));
 
         //==============MVC部分==============
-        //5、初始化HandlerMapping
+        // 5、初始化HandlerMapping
         doInitHandlerMapping();
 
         System.out.println("GP Spring framework is init.");
