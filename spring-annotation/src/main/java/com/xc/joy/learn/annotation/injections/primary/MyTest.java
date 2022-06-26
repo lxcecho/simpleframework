@@ -15,7 +15,5 @@ public class MyTest {
 
         MyService service = app.getBean(MyService.class);
         service.print();
-
-
     }
 }

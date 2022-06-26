@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
  * @since 23:27 25-06-2022
  */
 @Configuration
-@PropertySource("classpath:values.properties")
+@PropertySource("classpath:values.properties") // 读取配置文件赋值
 public class MyConfig {
 
     @Bean

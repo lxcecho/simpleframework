@@ -14,7 +14,7 @@ public class MyService {
 
 //    @Qualifier("dao")
 //    @Resource(name = "dao")
-    @Autowired
+    @Autowired // 默认按类型装配，如果想使用按名称装配，可结合 @Qualifier 一块使用
     private MyDao myDao;
 
     public void print() {

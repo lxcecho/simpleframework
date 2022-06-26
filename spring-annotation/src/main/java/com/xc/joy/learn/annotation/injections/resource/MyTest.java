@@ -13,10 +13,7 @@ public class MyTest {
     public static void main(String[] args){
         ApplicationContext app = new AnnotationConfigApplicationContext(MyConfig.class);
 
-
         MyService service = app.getBean(MyService.class);
         service.print();
-
-
     }
 }

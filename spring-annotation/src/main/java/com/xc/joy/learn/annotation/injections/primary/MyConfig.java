@@ -18,10 +18,9 @@ import org.springframework.context.annotation.Primary;
 })
 public class MyConfig {
 
-
-    @Primary
+    @Primary // 自动装配时当出现多个 Bean 候选者时，被注解为 @Primary 的 Bean 将作为首选，否则抛出异常
     @Bean("myDao")
-    public MyDao dao(){
+    public MyDao dao() {
         MyDao dao = new MyDao();
         dao.setFlag("9");
         return dao;
@@ -29,7 +28,7 @@ public class MyConfig {
 
 
     @Bean("myDao")
-    public MyDao myDao(){
+    public MyDao myDao() {
         MyDao dao = new MyDao();
         dao.setFlag("3");
         return dao;
