@@ -20,8 +20,8 @@ public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegi
      */
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        boolean company = registry.containsBeanDefinition("com.gupaoedu.project.entity.Company");
-        boolean member = registry.containsBeanDefinition("com.gupaoedu.project.entity.Member");
+        boolean company = registry.containsBeanDefinition("com.xc.joy.learn.entity.Company");
+        boolean member = registry.containsBeanDefinition("com.xc.joy.learn.entity.Member");
 
         if(company && member){
             BeanDefinition beanDefinition = new RootBeanDefinition(User.class);

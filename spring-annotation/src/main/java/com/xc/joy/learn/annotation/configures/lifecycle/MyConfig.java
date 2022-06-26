@@ -20,8 +20,8 @@ public class MyConfig {
         return new Car();
     }
 
-    //3种方式
-    // 1.添加initMethod 和 destroyMethod
-    // 2.实现InitializingBean和DisposableBean接口
-    // 3.使用@PostConstruct和@PreDestroy注解
+    // 3种方式
+    // 1.添加 initMethod 和 destroyMethod
+    // 2.实现 InitializingBean 和 DisposableBean 接口
+    // 3.使用 @PostConstruct 和 @PreDestroy 注解
 }

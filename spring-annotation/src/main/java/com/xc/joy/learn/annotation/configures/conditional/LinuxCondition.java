@@ -13,7 +13,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class LinuxCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        //从IoC容器中拿到已经实例化的对象
+        // 从IoC容器中拿到已经实例化的对象
         ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
         Environment environment = context.getEnvironment();
         String osName = environment.getProperty("os.name");

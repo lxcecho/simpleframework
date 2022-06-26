@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 23:17 25-06-2022
  */
 @Configuration
-@ComponentScan(value = "com.xc.joy",
+@ComponentScan(value = "com.xc.joy.learn",
 //                includeFilters = {@Filter(type = FilterType.ANNOTATION,value = {Controller.class})},
 //                includeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE,value = {MyController.class})},
 //                  includeFilters = {@Filter(type = FilterType.CUSTOM,value = {GPTypeFilter.class})},

@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author lxcecho 909231497@qq.com
  * @since 23:17 25-06-2022
  */
-public class GPTypeFilter implements TypeFilter {
+public class EchoTypeFilter implements TypeFilter {
 
     /**
      * @param metadataReader        获取当前正在操作的信息

@@ -10,7 +10,7 @@ import org.springframework.core.type.AnnotationMetadata;
 public class MyImportSelector implements ImportSelector {
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        return new String[]{"com.gupaoedu.project.entity.Company",
-                            "com.gupaoedu.project.entity.Member"};
+        return new String[]{"com.xc.joy.learn.entity.Company",
+                            "com.xc.joy.learn.entity.Member"};
     }
 }

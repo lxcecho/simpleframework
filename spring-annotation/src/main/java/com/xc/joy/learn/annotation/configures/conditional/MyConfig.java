@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author lxcecho 909231497@qq.com
  * @since 23:17 25-06-2022
+ *
+ * @Conditional 按照一定的条件进行判断，满足条件给容器注册 Bean
  */
 @Configuration
 public class MyConfig {
