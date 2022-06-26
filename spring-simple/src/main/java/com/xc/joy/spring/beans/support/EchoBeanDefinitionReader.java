@@ -116,4 +116,8 @@ public class EchoBeanDefinitionReader {
         return String.valueOf(chars);
     }
 
+    public Properties getConfig() {
+        return this.contextConfig;
+    }
+
 }

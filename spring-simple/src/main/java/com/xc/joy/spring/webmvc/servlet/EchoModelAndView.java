@@ -7,7 +7,9 @@ import java.util.Map;
  * @since 11:18 26-06-2022
  */
 public class EchoModelAndView {
+
     private String viewName;
+
     private Map<String, ?> model;
 
     public EchoModelAndView(String viewName, Map<String, ?> model) {

@@ -17,11 +17,10 @@ public class EchoHandlerAdapter {
 
     public EchoModelAndView handler(HttpServletRequest req, HttpServletResponse resp, EchoHandlerMapping handler) throws Exception {
 
-        //保存形参列表
-        //将参数名称和参数的位置，这种关系保存起来
+        // 保存形参列表，将参数名称和参数的位置，这种关系保存起来
         Map<String, Integer> paramIndexMapping = new HashMap<String, Integer>();
 
-        //通过运行时的状态去拿到你
+        // 通过运行时的状态去拿到你
         Annotation[][] pa = handler.getMethod().getParameterAnnotations();
         for (int i = 0; i < pa.length; i++) {
             for (Annotation a : pa[i]) {
@@ -38,18 +37,18 @@ public class EchoHandlerAdapter {
             }
         }
 
-        //初始化一下
+        // 初始化一下
         Class<?>[] paramTypes = handler.getMethod().getParameterTypes();
+
         for (int i = 0; i < paramTypes.length; i++) {
-            Class<?> paramterType = paramTypes[i];
-            if (paramterType == HttpServletRequest.class || paramterType == HttpServletResponse.class) {
-                paramIndexMapping.put(paramterType.getName(), i);
+            Class<?> parameterType = paramTypes[i];
+            if (parameterType == HttpServletRequest.class || parameterType == HttpServletResponse.class) {
+                paramIndexMapping.put(parameterType.getName(), i);
             }
         }
 
 
-        //去拼接实参列表
-        //http://localhost/web/query?name=Tom&Cat
+        // 去拼接实参列表 http://localhost/web/query?name=Tom&Cat
         Map<String, String[]> params = req.getParameterMap();
 
         Object[] paramValues = new Object[paramTypes.length];
@@ -65,7 +64,7 @@ public class EchoHandlerAdapter {
 
             int index = paramIndexMapping.get(param.getKey());
 
-            //允许自定义的类型转换器Converter
+            // 允许自定义的类型转换器 Converter
             paramValues[index] = castStringValue(value, paramTypes[index]);
         }
 

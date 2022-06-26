@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author lxcecho 909231497@qq.com
@@ -165,11 +166,15 @@ public class EchoApplicationContext {
         String className = beanDefinition.getBeanClassName();
         Object instance = null;
         try {
-            // 2、反射实例化，得到一个对象
-            Class<?> clazz = Class.forName(className);
-            // 默认的类名首字母小写
-            instance = clazz.newInstance();
-            this.factoryBeanObjectCache.put(beanName, instance);
+            if (this.factoryBeanObjectCache.containsKey(beanName)) {
+                instance = factoryBeanObjectCache.get(beanName);
+            } else {
+                // 2、反射实例化，得到一个对象
+                Class<?> clazz = Class.forName(className);
+                // 默认的类名首字母小写
+                instance = clazz.newInstance();
+                this.factoryBeanObjectCache.put(beanName, instance);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -178,6 +183,18 @@ public class EchoApplicationContext {
 
     public Object getBean(Class beanClass) {
         return getBean(beanClass.getName());
+    }
+
+    public int getBeanDefinitionCount() {
+        return this.beanDefinitionMap.size();
+    }
+
+    public String[] getBeanDefinitionNames() {
+        return this.beanDefinitionMap.keySet().toArray(new String[beanDefinitionMap.size()]);
+    }
+
+    public Properties getConfig() {
+        return this.reader.getConfig();
     }
 
 }

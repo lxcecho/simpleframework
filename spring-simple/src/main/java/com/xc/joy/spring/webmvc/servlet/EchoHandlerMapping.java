@@ -9,9 +9,21 @@ import java.lang.reflect.Method;
  * @since 11:18 26-06-2022
  */
 public class EchoHandlerMapping {
-    private Pattern pattern;     //URL
-    private Method method;  //对应的Method
-    private Object controller;//Method对应的实例对象
+
+    /**
+     * URL
+     */
+    private Pattern pattern;
+
+    /**
+     * 对应的 Method
+     */
+    private Method method;
+
+    /**
+     * Method 对应的实例对象
+     */
+    private Object controller;
 
     public EchoHandlerMapping(Pattern pattern, Object controller, Method method) {
         this.pattern = pattern;
@@ -42,4 +54,5 @@ public class EchoHandlerMapping {
     public void setController(Object controller) {
         this.controller = controller;
     }
+
 }

@@ -2,7 +2,6 @@ package com.xc.joy.spring.webmvc.servlet;
 
 import com.xc.joy.spring.annotation.EchoController;
 import com.xc.joy.spring.annotation.EchoRequestMapping;
-import com.xc.joy.spring.annotation.EchoRequestParam;
 import com.xc.joy.spring.context.EchoApplicationContext;
 
 import javax.servlet.ServletConfig;
@@ -10,10 +9,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author lxcecho 909231497@qq.com
@@ -25,11 +26,11 @@ import java.util.*;
 public class EchoDispatcherServlet extends HttpServlet {
     private EchoApplicationContext applicationContext;
 
+    private Map<EchoHandlerMapping, EchoHandlerAdapter> handlerAdapterMap = new HashMap<>();
 
-    //IoC容器，key默认是类名首字母小写，value就是对应的实例对象
-    private Map<String, Object> ioc = new HashMap<String, Object>();
+    private List<EchoHandlerMapping> handlerMappings = new ArrayList<>();
 
-    private Map<String, Method> handlerMapping = new HashMap<String, Method>();
+    private List<EchoViewResolver> viewResolvers = new ArrayList<>();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,7 +40,7 @@ public class EchoDispatcherServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        //6、委派,根据URL去找到一个对应的Method并通过response返回
+        // 6、委派,根据 URL 去找到一个对应的 Method 并通过 response 返回
         try {
             doDispatch(req, resp);
         } catch (Exception e) {
@@ -50,56 +51,69 @@ public class EchoDispatcherServlet extends HttpServlet {
     }
 
     private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        // 完成了对 HandlerMapping 的封装，及对方法返回值的封装 ModelAndView
+
+        // 1、通过 URL 获得一个 HandlerMapping
+        EchoHandlerMapping handlerMapping = getHandlerMapping(req);
+
+        if (handlerMapping == null) {
+            processDispatcherResult(req, resp, new EchoModelAndView("404"));
+            return;
+        }
+
+        // 2、根据一个 HandlerMapping 获得一个 HandlerAdapter
+        EchoHandlerAdapter handlerAdapter = getHandlerAdapter(handlerMapping);
+
+        // 3、解析某一个方法的形参和返回值之后，统一封装为 ModelAndView 对象
+        EchoModelAndView modelAndView = handlerAdapter.handler(req, resp, handlerMapping);
+
+        // 就把 ModelAndView 变成一个 ViewResolver
+        processDispatcherResult(req, resp, modelAndView);
+
+    }
+
+    private EchoHandlerAdapter getHandlerAdapter(EchoHandlerMapping handlerMapping) {
+        if (this.handlerAdapterMap.isEmpty()) {
+            return null;
+        }
+        return handlerAdapterMap.get(handlerMapping);
+    }
+
+    private void processDispatcherResult(HttpServletRequest req, HttpServletResponse resp, EchoModelAndView modelAndView) throws Exception {
+        if (modelAndView == null) {
+            return;
+        }
+
+        if (this.viewResolvers.isEmpty()) {
+            return;
+        }
+
+        for (EchoViewResolver viewResolver : this.viewResolvers) {
+            EchoView view = viewResolver.resolveViewName(modelAndView.getViewName());
+            // 直接往浏览器输出
+            view.render(modelAndView.getModel(), req, resp);
+            return;
+        }
+
+    }
+
+    private EchoHandlerMapping getHandlerMapping(HttpServletRequest req) {
+        if (this.handlerMappings.isEmpty()) {
+            return null;
+        }
         String url = req.getRequestURI();
         String contextPath = req.getContextPath();
         url = url.replaceAll(contextPath, "").replaceAll("/+", "/");
 
-        if (!this.handlerMapping.containsKey(url)) {
-            resp.getWriter().write("404 Not Found!!!");
-            return;
-        }
-
-        Map<String, String[]> params = req.getParameterMap();
-
-        Method method = this.handlerMapping.get(url);
-
-
-        //获取形参列表
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        Object[] paramValues = new Object[parameterTypes.length];
-
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class paramterType = parameterTypes[i];
-            if (paramterType == HttpServletRequest.class) {
-                paramValues[i] = req;
-            } else if (paramterType == HttpServletResponse.class) {
-                paramValues[i] = resp;
-            } else if (paramterType == String.class) {
-                //通过运行时的状态去拿到你
-                Annotation[][] pa = method.getParameterAnnotations();
-                for (int j = 0; j < pa.length; j++) {
-                    for (Annotation a : pa[i]) {
-                        if (a instanceof EchoRequestParam) {
-                            String paramName = ((EchoRequestParam) a).value();
-                            if (!"".equals(paramName.trim())) {
-                                String value = Arrays.toString(params.get(paramName))
-                                        .replaceAll("\\[|\\]", "")
-                                        .replaceAll("\\s+", ",");
-                                paramValues[i] = value;
-                            }
-                        }
-                    }
-                }
-
+        for (EchoHandlerMapping handlerMapping : this.handlerMappings) {
+            Matcher matcher = handlerMapping.getPattern().matcher(url);
+            if (!matcher.matches()) {
+                continue;
             }
+            return handlerMapping;
         }
 
-
-        //暂时硬编码
-        String beanName = toLowerFirstCase(method.getDeclaringClass().getSimpleName());
-        //赋值实参列表
-        method.invoke(ioc.get(beanName), paramValues);
-
+        return null;
     }
 
     @Override
@@ -108,34 +122,63 @@ public class EchoDispatcherServlet extends HttpServlet {
         // 初始化 Spring 核心 IoC 容器
         applicationContext = new EchoApplicationContext(config.getInitParameter("contextConfigLocation"));
 
-        //==============MVC部分==============
-        // 5、初始化HandlerMapping
-        doInitHandlerMapping();
+        // 完成了 Spring IoC、DI 和 MVC 的对接
+
+        // 初始化就打组件
+        initStrategies(applicationContext);
 
         System.out.println("GP Spring framework is init.");
     }
 
-    private void doInitHandlerMapping() {
-        if (ioc.isEmpty()) {
+    private void initStrategies(EchoApplicationContext applicationContext) {
+        // 初始化 HandlerMapping
+        initHandlerMappings(applicationContext);
+
+        initHandlerAdapters(applicationContext);
+
+        initViewResolvers(applicationContext);
+
+    }
+
+    private void initViewResolvers(EchoApplicationContext applicationContext) {
+        String templateRoot = applicationContext.getConfig().getProperty("templateRoot");
+        String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
+
+        File templateRootDir = new File(templateRootPath);
+        for (File file : templateRootDir.listFiles()) {
+            this.viewResolvers.add(new EchoViewResolver(templateRoot));
+        }
+
+    }
+
+    private void initHandlerAdapters(EchoApplicationContext applicationContext) {
+        for (EchoHandlerMapping handlerMapping : this.handlerMappings) {
+            this.handlerAdapterMap.put(handlerMapping, new EchoHandlerAdapter());
+        }
+    }
+
+    private void initHandlerMappings(EchoApplicationContext applicationContext) {
+        if (this.applicationContext.getBeanDefinitionCount() == 0) {
             return;
         }
 
-        for (Map.Entry<String, Object> entry : ioc.entrySet()) {
-            Class<?> clazz = entry.getValue().getClass();
+        for (String beanName : this.applicationContext.getBeanDefinitionNames()) {
+            Object instance = this.applicationContext.getBean(beanName);
+
+            Class<?> clazz = instance.getClass();
 
             if (!clazz.isAnnotationPresent(EchoController.class)) {
                 continue;
             }
 
-
-            //相当于提取 class上配置的url
+            // 相当于提取 class 上配置的 url
             String baseUrl = "";
             if (clazz.isAnnotationPresent(EchoRequestMapping.class)) {
                 EchoRequestMapping requestMapping = clazz.getAnnotation(EchoRequestMapping.class);
                 baseUrl = requestMapping.value();
             }
 
-            //只获取public的方法
+            // 只获取 public 的方法
             for (Method method : clazz.getMethods()) {
                 if (!method.isAnnotationPresent(EchoRequestMapping.class)) {
                     continue;
@@ -144,15 +187,17 @@ public class EchoDispatcherServlet extends HttpServlet {
                 EchoRequestMapping requestMapping = method.getAnnotation(EchoRequestMapping.class);
 
                 // //demo//query
-                String url = ("/" + baseUrl + "/" + requestMapping.value()).replaceAll("/+", "/");
-                handlerMapping.put(url, method);
-                System.out.println("Mapped : " + url + "," + method);
+                String regex = ("/" + baseUrl + "/" + requestMapping.value().replaceAll("\\*", ".*")).replaceAll("/+", "/");
+                Pattern pattern = Pattern.compile(regex);
+//                handlerMapping.put(url, method);
+                handlerMappings.add(new EchoHandlerMapping(pattern, instance, method));
+                System.out.println("Mapped : " + pattern + "," + method);
             }
 
         }
     }
 
-    //自己写，自己用
+    // 自己写，自己用
     private String toLowerFirstCase(String simpleName) {
         char[] chars = simpleName.toCharArray();
 //        if(chars[0] > )

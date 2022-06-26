@@ -8,11 +8,12 @@ import java.io.File;
  */
 public class EchoViewResolver {
     private final String DEFAULT_TEMPLATE_SUFFIX = ".html";
-    private File tempateRootDir;
+
+    private File templateRootDir;
 
     public EchoViewResolver(String templateRoot) {
         String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
-        tempateRootDir = new File(templateRootPath);
+        templateRootDir = new File(templateRootPath);
     }
 
     public EchoView resolveViewName(String viewName) {
@@ -20,7 +21,7 @@ public class EchoViewResolver {
             return null;
         }
         viewName = viewName.endsWith(DEFAULT_TEMPLATE_SUFFIX) ? viewName : (viewName + DEFAULT_TEMPLATE_SUFFIX);
-        File templateFile = new File((tempateRootDir.getPath() + "/" + viewName).replaceAll("/+", "/"));
+        File templateFile = new File((templateRootDir.getPath() + "/" + viewName).replaceAll("/+", "/"));
         return new EchoView(templateFile);
     }
 
