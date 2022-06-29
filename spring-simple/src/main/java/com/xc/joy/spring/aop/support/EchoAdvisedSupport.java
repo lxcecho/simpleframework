@@ -10,13 +10,15 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
+ * @author lxcecho 909231497@qq.com
+ * @since 21:42 26-06-2022
+ *
  * 解析AOP配置的工具类
- * Created by Tom.
  */
 public class EchoAdvisedSupport {
     private EchoAopConfig config;
     private Object target;
-    private Class targetClass;
+    private Class<?> targetClass;
     private Pattern pointCutClassPattern;
 
     private Map<Method, Map<String, EchoAdvice>> methodCache;
@@ -25,10 +27,12 @@ public class EchoAdvisedSupport {
         this.config = config;
     }
 
-    //解析配置文件的方法
+    /**
+     * 解析配置文件的方法
+     */
     private void parse() {
 
-        //把Spring的Excpress变成Java能够识别的正则表达式
+        // 把 Spring 的 Express 变成 Java 能够识别的正则表达式
         String pointCut = config.getPointCut()
                 .replaceAll("\\.", "\\\\.")
                 .replaceAll("\\\\.\\*", ".*")
@@ -36,14 +40,14 @@ public class EchoAdvisedSupport {
                 .replaceAll("\\)", "\\\\)");
 
 
-        //保存专门匹配Class的正则
+        // 保存专门匹配 Class 的正则
         String pointCutForClassRegex = pointCut.substring(0, pointCut.lastIndexOf("\\(") - 4);
         pointCutClassPattern = Pattern.compile("class " + pointCutForClassRegex.substring(pointCutForClassRegex.lastIndexOf(" ") + 1));
 
 
-        //享元的共享池
+        // 享元的共享池
         methodCache = new HashMap<Method, Map<String, EchoAdvice>>();
-        //保存专门匹配方法的正则
+        // 保存专门匹配方法的正则
         Pattern pointCutPattern = Pattern.compile(pointCut);
         try {
             Class aspectClass = Class.forName(this.config.getAspectClass());
@@ -74,12 +78,10 @@ public class EchoAdvisedSupport {
                         advices.put("afterThrow", advice);
                     }
 
-                    //跟目标代理类的业务方法和Advices建立一对多个关联关系，以便在Porxy类中获得
+                    // 跟目标代理类的业务方法和 Advices 建立一对多个关联关系，以便在 Proxy 类中获得
                     methodCache.put(method, advices);
                 }
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,19 +89,31 @@ public class EchoAdvisedSupport {
     }
 
 
-    //根据一个目标代理类的方法，获得其对应的通知
-    public Map<String, EchoAdvice> getAdvices(Method method, Object o) throws Exception {
-        //享元设计模式的应用
+    /**
+     * 根据一个目标代理类的方法，获得其对应的通知
+     *
+     * @param method
+     * @param targetClass
+     * @return
+     * @throws Exception
+     */
+    public Map<String, EchoAdvice> getAdvices(Method method,  Class<?> targetClass) throws Exception {
+        // 享元设计模式的应用
         Map<String, EchoAdvice> cache = methodCache.get(method);
         if (null == cache) {
             Method m = targetClass.getMethod(method.getName(), method.getParameterTypes());
             cache = methodCache.get(m);
+            // 底层逻辑，对代理方法进行一个兼容处理
             this.methodCache.put(m, cache);
         }
         return cache;
     }
 
-    //给ApplicationContext首先IoC中的对象初始化时调用，决定要不要生成代理类的逻辑
+    /**
+     * 给 ApplicationContext 首先 IoC 中的对象初始化时调用，决定要不要生成代理类的逻辑
+     *
+     * @return
+     */
     public boolean pointCutMath() {
         return pointCutClassPattern.matcher(this.targetClass.toString()).matches();
     }

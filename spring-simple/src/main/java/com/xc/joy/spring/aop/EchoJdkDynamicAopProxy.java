@@ -10,9 +10,10 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 
 /**
- * Created by Tom.
+ * @author lxcecho 909231497@qq.com
+ * @since 21:42 26-06-2022
  */
-public class EchoJdkDynamicAopProxy implements InvocationHandler {
+public class EchoJdkDynamicAopProxy implements EchoAopProxy, InvocationHandler {
     private EchoAdvisedSupport config;
 
     public EchoJdkDynamicAopProxy(EchoAdvisedSupport config) {
@@ -21,24 +22,24 @@ public class EchoJdkDynamicAopProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Map<String, EchoAdvice> advices = config.getAdvices(method, null);
+        Map<String, EchoAdvice> advices = config.getAdvices(method, this.config.getTargetClass());
 
         Object returnValue;
         try {
-            invokeAdivce(advices.get("before"));
+            invokeAdvice(advices.get("before"));
 
             returnValue = method.invoke(this.config.getTarget(), args);
 
-            invokeAdivce(advices.get("after"));
+            invokeAdvice(advices.get("after"));
         } catch (Exception e) {
-            invokeAdivce(advices.get("afterThrow"));
+            invokeAdvice(advices.get("afterThrow"));
             throw e;
         }
 
         return returnValue;
     }
 
-    private void invokeAdivce(EchoAdvice advice) {
+    private void invokeAdvice(EchoAdvice advice) {
         try {
             advice.getAdviceMethod().invoke(advice.getAspect());
         } catch (IllegalAccessException e) {
@@ -48,7 +49,13 @@ public class EchoJdkDynamicAopProxy implements InvocationHandler {
         }
     }
 
+    @Override
     public Object getProxy() {
-        return Proxy.newProxyInstance(this.getClass().getClassLoader(), this.config.getTargetClass().getInterfaces(), this);
+        return getProxy(this.config.getTargetClass().getClassLoader());
+    }
+
+    @Override
+    public Object getProxy(ClassLoader classLoader) {
+        return Proxy.newProxyInstance(classLoader, this.config.getTargetClass().getInterfaces(), this);
     }
 }

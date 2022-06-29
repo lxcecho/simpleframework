@@ -4,6 +4,7 @@ import com.xc.joy.spring.annotation.EchoAutowired;
 import com.xc.joy.spring.annotation.EchoController;
 import com.xc.joy.spring.annotation.EchoService;
 import com.xc.joy.spring.aop.EchoJdkDynamicAopProxy;
+import com.xc.joy.spring.aop.config.EchoAopConfig;
 import com.xc.joy.spring.aop.support.EchoAdvisedSupport;
 import com.xc.joy.spring.beans.EchoBeanWrapper;
 import com.xc.joy.spring.beans.config.EchoBeanDefinition;
@@ -197,8 +198,15 @@ public class EchoApplicationContext {
     }
 
     private EchoAdvisedSupport instantiateAopConfig(EchoBeanDefinition beanDefinition) {
+        EchoAopConfig config = new EchoAopConfig();
+        config.setPointCut(this.reader.getConfig().getProperty("pointCut"));
+        config.setAspectClass(this.reader.getConfig().getProperty("aspectClass"));
+        config.setAspectBefore(this.reader.getConfig().getProperty("aspectBefore"));
+        config.setAspectAfter(this.reader.getConfig().getProperty("aspectAfter"));
+        config.setAspectAfterThrow(this.reader.getConfig().getProperty("aspectAfterThrow"));
+        config.setAspectAfterThrowingName(this.reader.getConfig().getProperty("aspectAfterThrowingName"));
 
-        return null;
+        return new EchoAdvisedSupport(config);
     }
 
     public Object getBean(Class beanClass) {
