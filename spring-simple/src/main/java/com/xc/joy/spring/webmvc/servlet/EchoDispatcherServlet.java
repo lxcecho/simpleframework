@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 public class EchoDispatcherServlet extends HttpServlet {
     private EchoApplicationContext applicationContext;
 
-    private Map<EchoHandlerMapping, EchoHandlerAdapter> handlerAdapterMap = new HashMap<>();
-
     private List<EchoHandlerMapping> handlerMappings = new ArrayList<>();
+
+    private Map<EchoHandlerMapping, EchoHandlerAdapter> handlerAdapters = new HashMap<>();
 
     private List<EchoViewResolver> viewResolvers = new ArrayList<>();
 
@@ -72,13 +72,14 @@ public class EchoDispatcherServlet extends HttpServlet {
 
     }
 
-    private EchoHandlerAdapter getHandlerAdapter(EchoHandlerMapping handlerMapping) {
-        if (this.handlerAdapterMap.isEmpty()) {
-            return null;
-        }
-        return handlerAdapterMap.get(handlerMapping);
-    }
-
+    /**
+     * 把 EchoModelAndView 变成一个 HTML、OutputStream、Json、free mark、velocity
+     *
+     * @param req
+     * @param resp
+     * @param modelAndView
+     * @throws Exception
+     */
     private void processDispatcherResult(HttpServletRequest req, HttpServletResponse resp, EchoModelAndView modelAndView) throws Exception {
         if (modelAndView == null) {
             return;
@@ -97,6 +98,13 @@ public class EchoDispatcherServlet extends HttpServlet {
 
     }
 
+    private EchoHandlerAdapter getHandlerAdapter(EchoHandlerMapping handlerMapping) {
+        if (this.handlerAdapters.isEmpty()) {
+            return null;
+        }
+        return handlerAdapters.get(handlerMapping);
+    }
+
     private EchoHandlerMapping getHandlerMapping(HttpServletRequest req) {
         if (this.handlerMappings.isEmpty()) {
             return null;
@@ -106,13 +114,17 @@ public class EchoDispatcherServlet extends HttpServlet {
         url = url.replaceAll(contextPath, "").replaceAll("/+", "/");
 
         for (EchoHandlerMapping handlerMapping : this.handlerMappings) {
-            Matcher matcher = handlerMapping.getPattern().matcher(url);
-            if (!matcher.matches()) {
-                continue;
+            try {
+                Matcher matcher = handlerMapping.getPattern().matcher(url);
+                // 如果没有匹配上继续下一个匹配
+                if (!matcher.matches()) {
+                    continue;
+                }
+                return handlerMapping;
+            } catch (Exception e) {
+                throw e;
             }
-            return handlerMapping;
         }
-
         return null;
     }
 
@@ -124,25 +136,31 @@ public class EchoDispatcherServlet extends HttpServlet {
 
         // 完成了 Spring IoC、DI 和 MVC 的对接
 
-        // 初始化就打组件
+        // 初始化 Spring MVC 九大组件
         initStrategies(applicationContext);
 
         System.out.println("GP Spring framework is init.");
     }
 
+    /**
+     * 初始化策略
+     *
+     * @param applicationContext
+     */
     private void initStrategies(EchoApplicationContext applicationContext) {
         // 初始化 HandlerMapping
         initHandlerMappings(applicationContext);
-
+        // 初始化 HandlerAdapter
         initHandlerAdapters(applicationContext);
-
+        // 初始化 ViewResolver
         initViewResolvers(applicationContext);
 
     }
 
     private void initViewResolvers(EchoApplicationContext applicationContext) {
+        // 获取模板存放目录
         String templateRoot = applicationContext.getConfig().getProperty("templateRoot");
-        String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
+        String templateRootPath = Objects.requireNonNull(this.getClass().getClassLoader().getResource(templateRoot)).getFile();
 
         File templateRootDir = new File(templateRootPath);
         for (File file : templateRootDir.listFiles()) {
@@ -153,47 +171,51 @@ public class EchoDispatcherServlet extends HttpServlet {
 
     private void initHandlerAdapters(EchoApplicationContext applicationContext) {
         for (EchoHandlerMapping handlerMapping : this.handlerMappings) {
-            this.handlerAdapterMap.put(handlerMapping, new EchoHandlerAdapter());
+            this.handlerAdapters.put(handlerMapping, new EchoHandlerAdapter());
         }
     }
 
     private void initHandlerMappings(EchoApplicationContext applicationContext) {
-        if (this.applicationContext.getBeanDefinitionCount() == 0) {
-            return;
-        }
-
-        for (String beanName : this.applicationContext.getBeanDefinitionNames()) {
-            Object instance = this.applicationContext.getBean(beanName);
-
-            Class<?> clazz = instance.getClass();
-
-            if (!clazz.isAnnotationPresent(EchoController.class)) {
-                continue;
+        try {
+            if (this.applicationContext.getBeanDefinitionCount() == 0) {
+                return;
             }
 
-            // 相当于提取 class 上配置的 url
-            String baseUrl = "";
-            if (clazz.isAnnotationPresent(EchoRequestMapping.class)) {
-                EchoRequestMapping requestMapping = clazz.getAnnotation(EchoRequestMapping.class);
-                baseUrl = requestMapping.value();
-            }
+            for (String beanName : this.applicationContext.getBeanDefinitionNames()) {
 
-            // 只获取 public 的方法
-            for (Method method : clazz.getMethods()) {
-                if (!method.isAnnotationPresent(EchoRequestMapping.class)) {
+                Object instance = this.applicationContext.getBean(beanName);
+                Class<?> clazz = instance.getClass();
+
+                if (!clazz.isAnnotationPresent(EchoController.class)) {
                     continue;
                 }
-                //提取每个方法上面配置的url
-                EchoRequestMapping requestMapping = method.getAnnotation(EchoRequestMapping.class);
 
-                // //demo//query
-                String regex = ("/" + baseUrl + "/" + requestMapping.value().replaceAll("\\*", ".*")).replaceAll("/+", "/");
-                Pattern pattern = Pattern.compile(regex);
-//                handlerMapping.put(url, method);
-                handlerMappings.add(new EchoHandlerMapping(pattern, instance, method));
-                System.out.println("Mapped : " + pattern + "," + method);
+                // 相当于提取 class 上配置的 url
+                String baseUrl = "";
+                if (clazz.isAnnotationPresent(EchoRequestMapping.class)) {
+                    EchoRequestMapping requestMapping = clazz.getAnnotation(EchoRequestMapping.class);
+                    baseUrl = requestMapping.value();
+                }
+
+                // 只获取 public 的方法
+                for (Method method : clazz.getMethods()) {
+                    if (!method.isAnnotationPresent(EchoRequestMapping.class)) {
+                        continue;
+                    }
+                    //提取每个方法上面配置的url
+                    EchoRequestMapping requestMapping = method.getAnnotation(EchoRequestMapping.class);
+
+                    // //demo//query
+                    String regex = ("/" + baseUrl + "/" + requestMapping.value().replaceAll("\\*", ".*")).replaceAll("/+", "/");
+                    Pattern pattern = Pattern.compile(regex);
+                    //                handlerMapping.put(url, method);
+                    this.handlerMappings.add(new EchoHandlerMapping(pattern, instance, method));
+                    System.out.println("Mapped : " + pattern + "," + method);
+                }
+
             }
-
+        } catch (SecurityException e) {
+            throw new RuntimeException(e);
         }
     }
 

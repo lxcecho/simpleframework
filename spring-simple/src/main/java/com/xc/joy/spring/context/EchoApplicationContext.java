@@ -3,6 +3,8 @@ package com.xc.joy.spring.context;
 import com.xc.joy.spring.annotation.EchoAutowired;
 import com.xc.joy.spring.annotation.EchoController;
 import com.xc.joy.spring.annotation.EchoService;
+import com.xc.joy.spring.aop.EchoJdkDynamicAopProxy;
+import com.xc.joy.spring.aop.support.EchoAdvisedSupport;
 import com.xc.joy.spring.beans.EchoBeanWrapper;
 import com.xc.joy.spring.beans.config.EchoBeanDefinition;
 import com.xc.joy.spring.beans.support.EchoBeanDefinitionReader;
@@ -173,12 +175,30 @@ public class EchoApplicationContext {
                 Class<?> clazz = Class.forName(className);
                 // 默认的类名首字母小写
                 instance = clazz.newInstance();
+
+                // ------------AOP start----------------
+                // 如果满足条件，就直接返回 Proxy 对象
+                EchoAdvisedSupport config = instantiateAopConfig(beanDefinition);
+                config.setTarget(instance);
+                config.setTargetClass(clazz);
+
+                // 判断规则，要不要生成代理类，如果要就覆盖原生对象，如果不要就不做任何处理
+                if (config.pointCutMath()) {
+                    instance = new EchoJdkDynamicAopProxy(config).getProxy();
+                }
+                // -------------AOP end---------------
+
                 this.factoryBeanObjectCache.put(beanName, instance);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return instance;
+    }
+
+    private EchoAdvisedSupport instantiateAopConfig(EchoBeanDefinition beanDefinition) {
+
+        return null;
     }
 
     public Object getBean(Class beanClass) {

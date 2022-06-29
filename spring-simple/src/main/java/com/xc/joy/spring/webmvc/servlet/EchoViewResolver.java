@@ -1,6 +1,7 @@
 package com.xc.joy.spring.webmvc.servlet;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * @author lxcecho 909231497@qq.com
@@ -12,7 +13,7 @@ public class EchoViewResolver {
     private File templateRootDir;
 
     public EchoViewResolver(String templateRoot) {
-        String templateRootPath = this.getClass().getClassLoader().getResource(templateRoot).getFile();
+        String templateRootPath = Objects.requireNonNull(this.getClass().getClassLoader().getResource(templateRoot)).getFile();
         templateRootDir = new File(templateRootPath);
     }
 

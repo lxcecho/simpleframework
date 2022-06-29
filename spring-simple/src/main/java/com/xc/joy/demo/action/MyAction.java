@@ -28,35 +28,33 @@ public class MyAction {
     @EchoAutowired
     IModifyService modifyService;
 
+    // localhost:8080/web/query.json/name=lxcecho
     @EchoRequestMapping("/query.json")
-    public EchoModelAndView query(HttpServletRequest request, HttpServletResponse response,
-                                  @EchoRequestParam("name") String name) {
+    public EchoModelAndView query(HttpServletRequest request, HttpServletResponse response, @EchoRequestParam("name") String name) {
         String result = queryService.query(name);
         return out(response, result);
     }
 
+    // localhost:8080/web/addEcho.json/name=lxcecho&&addr=GuangZhou
     @EchoRequestMapping("/add*.json")
-    public EchoModelAndView add(HttpServletRequest request, HttpServletResponse response,
-                                @EchoRequestParam("name") String name, @EchoRequestParam("addr") String addr) {
+    public EchoModelAndView add(HttpServletRequest request, HttpServletResponse response, @EchoRequestParam("name") String name, @EchoRequestParam("addr") String addr) {
         String result = modifyService.add(name, addr);
         return out(response, result);
     }
 
+    // localhost:8080/web/remove.json/id=123
     @EchoRequestMapping("/remove.json")
-    public EchoModelAndView remove(HttpServletRequest request, HttpServletResponse response,
-                                   @EchoRequestParam("id") Integer id) {
+    public EchoModelAndView remove(HttpServletRequest request, HttpServletResponse response, @EchoRequestParam("id") Integer id) {
         String result = modifyService.remove(id);
         return out(response, result);
     }
 
+    // localhost:8080/web/edit.json/id=123&&name=Jerry
     @EchoRequestMapping("/edit.json")
-    public EchoModelAndView edit(HttpServletRequest request, HttpServletResponse response,
-                                 @EchoRequestParam("id") Integer id,
-                                 @EchoRequestParam("name") String name) {
+    public EchoModelAndView edit(HttpServletRequest request, HttpServletResponse response, @EchoRequestParam("id") Integer id, @EchoRequestParam("name") String name) {
         String result = modifyService.edit(id, name);
         return out(response, result);
     }
-
 
     private EchoModelAndView out(HttpServletResponse resp, String str) {
         try {

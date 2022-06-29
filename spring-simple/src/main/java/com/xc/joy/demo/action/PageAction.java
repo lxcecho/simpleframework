@@ -23,11 +23,13 @@ public class PageAction {
     @EchoAutowired
     IQueryService queryService;
 
+    // localhost:8080/first.html?girl=lxcecho
+
     @EchoRequestMapping("/first.html")
-    public EchoModelAndView query(@EchoRequestParam("teacher") String teacher) {
-        String result = queryService.query(teacher);
+    public EchoModelAndView query(@EchoRequestParam("girl") String girl) {
+        String result = queryService.query(girl);
         Map<String, Object> model = new HashMap<String, Object>();
-        model.put("teacher", teacher);
+        model.put("girl", girl);
         model.put("data", result);
         model.put("token", "123456");
         return new EchoModelAndView("first.html", model);

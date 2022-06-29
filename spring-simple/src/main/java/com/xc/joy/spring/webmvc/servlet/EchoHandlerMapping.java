@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public class EchoHandlerMapping {
 
     /**
-     * URL
+     * URL 正则匹配
      */
     private Pattern pattern;
 

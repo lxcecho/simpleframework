@@ -20,24 +20,20 @@ public class EchoHandlerAdapter {
         // 保存形参列表，将参数名称和参数的位置，这种关系保存起来
         Map<String, Integer> paramIndexMapping = new HashMap<String, Integer>();
 
-        // 通过运行时的状态去拿到你
+        // 通过运行时的状态去拿到方法中加注解的参数，把方法上的注解拿到，得到的是一个二维数组，因为一个参数可以有多个注解，而一个方法又有多个参数
         Annotation[][] pa = handler.getMethod().getParameterAnnotations();
         for (int i = 0; i < pa.length; i++) {
             for (Annotation a : pa[i]) {
                 if (a instanceof EchoRequestParam) {
                     String paramName = ((EchoRequestParam) a).value();
                     if (!"".equals(paramName.trim())) {
-//                        String value = Arrays.toString(params.get(paramName))
-//                                .replaceAll("\\[|\\]","")
-//                                .replaceAll("\\s+",",");
-//                        paramValues[i] = value;
                         paramIndexMapping.put(paramName, i);
                     }
                 }
             }
         }
 
-        // 初始化一下
+        // 初始化一下，提取方法中的 request 和 response 参数
         Class<?>[] paramTypes = handler.getMethod().getParameterTypes();
 
         for (int i = 0; i < paramTypes.length; i++) {
@@ -48,9 +44,10 @@ public class EchoHandlerAdapter {
         }
 
 
-        // 去拼接实参列表 http://localhost/web/query?name=Tom&Cat
+        // 去拼接方法的形参列表 http://localhost/web/query?name=Tom&Cat
         Map<String, String[]> params = req.getParameterMap();
 
+        // 实参列表
         Object[] paramValues = new Object[paramTypes.length];
 
         for (Map.Entry<String, String[]> param : params.entrySet()) {
@@ -79,7 +76,7 @@ public class EchoHandlerAdapter {
         }
 
         Object result = handler.getMethod().invoke(handler.getController(), paramValues);
-        if (result == null || result instanceof Void) {
+        if (result == null || (result instanceof Void)) {
             return null;
         }
 
@@ -105,4 +102,5 @@ public class EchoHandlerAdapter {
         }
 
     }
+
 }
