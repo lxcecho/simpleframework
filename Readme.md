@@ -78,6 +78,8 @@ getBean（）--instantiateBean() 反射初始化 Bean 独享，发起实例化�
 
 populateBean() 完成依赖注入，用反射注入，发起依赖注入的动作
 
+> 根据 beanName、beanDefinition、beanWrapper 找到需要赋值的属性，把需要赋值的属性封装成一个集合 PropertyValues，集合的元素 PropertyValue，需要赋值的 Bean，赋值需要调用的方法，要赋什么值？
+
 实例化有两种情况：
 
 - 目标类配置了 AOP，实例话的对象为代理类
