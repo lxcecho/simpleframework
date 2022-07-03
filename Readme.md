@@ -103,3 +103,63 @@ beanDefinitionMap 用来存 BeanDefinitionMap，存储配置信息
 > 因为容器本身也由容器管理，Root 来创建，都是单例放在 IOC 容器中。
 > 
 > BeanFactory：Bean 工厂的顶层规范，只是定义了 getBean 方法
+
+### Spring AOP
+
+切面 Aspect：面向规则，具有相同规则的方法的集合体；
+
+通知 Advice：回调；
+
+切入点 Pointcut：需要代理的具体方法；
+
+目标对象 Target Object：被代理的对象；
+
+AOP 代理 AOP Proxy：主要两种方式：JDK、Cglib；
+
+前置通知 Before Advice：在 invoke Pointcut 之前调用，织入的方法；
+
+后置通知 After Advice：Pointcut 之后调用，织入的方法；
+
+返回后通知 After Return Advice：返回值为 void，织入的方法；
+
+环绕通知 Around Advice：只要触发调用，织入的方法；
+
+异常通知 After Throwing Advice：Pointcut 抛出异常，，织入的方法；
+
+**寻找入口-->选择策略-->调用方法-->触发通知**
+
+### Spring MVC
+
+九大组件：
+
+- HandleMappings
+
+- HandleAdapters
+
+- HandleExceptionResolvers
+
+- ViewResolvers
+
+- RequestToViewNameTranslator
+
+- LocalResolver
+
+- ThemeResolver
+
+- MultipartResolver
+
+- FlashMapManager
+
+Spring MVC 使用优化建议：
+
+- Controller 如果能保持单例，尽量使用单例
+
+> 这样可以减少创建对象和回收对象的开销。也就是说，如果 Controller 的类变量和实例变量可以以方法形参声明的尽量以方法的形参生命，不要以类变量和实例变量声明，这样可以避免线程安全问题。
+
+- 处理 Request 的方法中的形参务必添加上 @RequestParam 注解
+
+> 这样可以避免 Spring MVC 使用 asm 框架读取 class 文件获取方法参数名的过程。即便 Spring MVC 对读取出的方法参数名进行了缓存，如果不要读取 class 文件当然是更好。
+
+- 缓存 URL
+
+> 阅读源码过程中，我们发现 Spring MVC 并没有对处理 URL 的方法进行缓存，也就是说每次都要根据请求 URL 去匹配 Controller 中的方法 URL，如果把 URL 和 Method 的关系缓存起来，会不会带来性能上的提升呢？有点恶心的是，负责解析 URL 和 Method 对应关系的 ServletHandlerMethodResolver 是一个 private 的内部类【这个好像在后边更新的版本上做了修改】，不能直接继承该类增强代码，必须要改代码后重新编译。当然，缓存起来，必须要考虑缓存的线程安全问题。
