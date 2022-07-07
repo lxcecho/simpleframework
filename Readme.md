@@ -163,3 +163,156 @@ Spring MVC 使用优化建议：
 - 缓存 URL
 
 > 阅读源码过程中，我们发现 Spring MVC 并没有对处理 URL 的方法进行缓存，也就是说每次都要根据请求 URL 去匹配 Controller 中的方法 URL，如果把 URL 和 Method 的关系缓存起来，会不会带来性能上的提升呢？有点恶心的是，负责解析 URL 和 Method 对应关系的 ServletHandlerMethodResolver 是一个 private 的内部类【这个好像在后边更新的版本上做了修改】，不能直接继承该类增强代码，必须要改代码后重新编译。当然，缓存起来，必须要考虑缓存的线程安全问题。
+ 
+# 常见面试题
+
+1. 使用 Spring 框架能给我们带来哪些好处？
+
+简化开发
+
+提供内置的解决方案BOP（面向Bean 编程）、IOC（控制反转）、AOP（面向切面编程）
+
+声明式事务管理，TransactionManager
+
+提供诸多的工具类，围绕 Spring 生态，比如 JdbcTemplate。
+
+2. BeanFactory 和 ApplicationContext 有啥区别？
+
+ApplicationContext 是 BeanFactory 的实现类
+
+BeanFactory 是顶层设计（抽象），而 ApplicationContext 是 User Interface
+
+功能会非常高丰富，API 是最全的，一般会认为 ApplicationContext 就是 IOC
+
+IOC 的功能是在 DefaultListableBeanFactory 类中完成的，但是有共同的接口
+
+3. Spring Bean 的声明周期
+
+即从创建、到调用、到销毁
+
+singleton 从 Spring 容器的启动到 Spring 容器的销毁，如果是延时加载，在调用前创建对象
+
+prototype 在调用前创建，调用后销毁，作用域决定了生命周期的长短
+
+4. Spring Bean 各作用域之间区别？
+
+- singleton 作用域全局，在任何地方可以通过 IOC 获取
+
+- prototype 全局
+
+- request 在一次请求发起和结束之间
+
+- session 一个 session 创建和 session 失效之间，一般默认是 30 分钟
+
+- global-session porlet 可以理解为容器中的一个应用【Spring5 不再支持】
+
+6. Spring 中 Bean 是线程安全的么？
+
+坑！！！！！！！！问的就是自己写的 bean 是线程安全的吗？
+
+Spring 中的 Bean 是否线程安全和 Spring 无关，和自己写的代码有关。
+
+7. Spring 中用到了哪些设计模式？？？
+
+工厂模式、单例模式（容器式单例）、原型（多例）模式、代理模式、享元模式、门面模式、适配器模式、委派模式、装饰器模式、责任链模式、空对象模式、解释器模式
+
+8. Spring、SpringBoot、SpringCloud 到底有什么区别？？
+
+Spring 已有的生态，他完成日常开发的所有功能，一个 Spring 打天下。SpringBoot，简化开发，Spring 简(减)的还不够，因为配置文件很头疼，配置的管理（架构师很累）内置了默认的配置，我们需要配的是需要覆盖的，不需要覆盖实现零配置，全面的去 Servlet 化，能够自运行了，部署也简单了，一个 jar 包打天下，不需要 Tomcat、Jetty。官方层面提供了一套脚手架，一键搭建，节省时间。
+
+SpringCloud 正式进军分布式，注册中心、服务发现、监控【链路追踪、配置中心、负载、熔断...打造一个生态，一站式分布式解决方案。Netflix，国外类似爱奇艺的视频网站，基因。
+
+Dubbo RPC，分布式服务治理，Netty、Spring、Zookeeper、Nginx...
+
+SpringCloud 依赖 SpringBoot，SpringBoot 依赖 Spring...
+
+9. Spring 的事务是如何传播的？？
+
+10. Spring 如何接管 MyBatis 的事务？？
+ 
+想办法拿到 Connection
+
+11. BeanFactory 和 FactoryBean 的区别？
+
+BeanFactory 是 IOC 容器的顶层设计，FactoryBean 用来构建 Bean 的一个包装类。
+
+12. 项目中如何应用 AOP？
+
+声明式事务管理、日志监听、权限管理、安全监控...
+
+13. Spring XML 和注解方式混用？
+
+统一一种方式，要么 XMl，要么 Annotation。
+
+
+14. 一个方法内，for 循环内重复操作数据库，是用一个连接还是多个连接？？？？
+
+**千万不要在一个方法内 for 循环去查询数据库**，因为多次连接数据库，导致连接池的数量不可控，循环的次数未知，如果说你能确定一定是循环多少次，比如 100 次。
+
+解决方案：
+
+- 分页、缓存、联合查询...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
