@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
  * @since 22:38 08-07-2022
  */
 @Repository
-public class MemberDao {
+public class EmployeeDao {
 
     private JdbcTemplate template;
 
@@ -25,21 +25,21 @@ public class MemberDao {
         template = new JdbcTemplate(dataSource);
     }
 
-    public List<Member> selectAll() throws Exception {
+    public List<Employee> selectAll() throws Exception {
         String sql = "select * from t_member";
-        return template.query(sql, new RowMapper<Member>() {
-            public Member mapRow(ResultSet rs, int i) throws SQLException {
-                Member member = new Member();
-                member.setName(rs.getString("name"));
-                member.setId(rs.getLong("id"));
-                member.setAddr(rs.getString("addr"));
-                member.setAge(rs.getInt("age"));
-                return member;
+        return template.query(sql, new RowMapper<Employee>() {
+            public Employee mapRow(ResultSet rs, int i) throws SQLException {
+                Employee employee = new Employee();
+                employee.setName(rs.getString("name"));
+                employee.setId(rs.getLong("id"));
+                employee.setAddr(rs.getString("addr"));
+                employee.setAge(rs.getInt("age"));
+                return employee;
             }
         });
     }
 
-    public boolean insert(Member m) throws Exception {
+    public boolean insert(Employee m) throws Exception {
         String sql = "insert into t_member(id,name,addr,age) value(?,?,?,?)";
         int count = template.update(sql, m.getId(), m.getName(), m.getAddr(), m.getAge());
         return count > 0;

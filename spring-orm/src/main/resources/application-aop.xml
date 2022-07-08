@@ -29,7 +29,7 @@
         <aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut"/>
         <aop:aspect ref="dataSource">
             <aop:pointcut id="transactionPointcut"
-                          expression="execution(public * com.xc.joy..*.service..*Service.*(..))"/>
+                          expression="execution(public * com.xc.joy.transaction..*.service..*Service.*(..))"/>
         </aop:aspect>
     </aop:config>
 

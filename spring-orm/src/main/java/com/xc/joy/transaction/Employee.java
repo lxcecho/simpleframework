@@ -15,21 +15,24 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_member")
 @Data
-public class Member implements Serializable {
+public class Employee implements Serializable {
 
     @Id
     private Long id;
+
     private String name;
+
     private String addr;
+
     private Integer age;
 
-    public Member(String name, String addr, Integer age) {
+    public Employee(String name, String addr, Integer age) {
         this.name = name;
         this.addr = addr;
         this.age = age;
     }
 
-    public Member() {
+    public Employee() {
     }
 
     @Override

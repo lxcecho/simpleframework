@@ -1,8 +1,6 @@
-package com.xc.joy.transaction.service;
+package com.xc.joy.transaction;
 
 import com.alibaba.fastjson.JSON;
-import com.xc.joy.transaction.Member;
-import com.xc.joy.transaction.MemberService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,16 +16,16 @@ import java.util.List;
  */
 @ContextConfiguration(locations = {"classpath*:application-context.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class MemberServiceTest {
+public class EmployeeServiceTest {
 
     @Autowired
-    MemberService memberService;
+    EmployeeService employeeService;
 
     @Test
 //    @Ignore
     public void queryAll() {
         try {
-            List<Member> list = memberService.queryAll();
+            List<Employee> list = employeeService.queryAll();
             System.out.println(JSON.toJSONString(list, true));
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,10 +33,10 @@ public class MemberServiceTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testRemove() {
         try {
-            boolean r = memberService.remove(1L);
+            boolean r = employeeService.remove(1L);
             System.out.println(r);
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,7 +47,7 @@ public class MemberServiceTest {
     @Ignore
     public void testLogin() {
         try {
-            memberService.login(15L, "tom");
+            employeeService.login(1L, "echo");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,8 +56,8 @@ public class MemberServiceTest {
     @Test
     public void testAdd() {
         try {
-            Member member = new Member("mic", "Hunan Changsha", 18);
-            memberService.add(member);
+            Employee employee = new Employee("lxcecho", "GuangXi Qinzhou", 18);
+            employeeService.add(employee);
         } catch (Exception e) {
             e.printStackTrace();
         }

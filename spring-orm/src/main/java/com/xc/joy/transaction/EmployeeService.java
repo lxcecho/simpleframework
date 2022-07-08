@@ -10,30 +10,29 @@ import java.util.List;
  * @since 22:38 08-07-2022
  */
 @Service
-public class MemberService {
+public class EmployeeService {
+
     @Autowired
-    private MemberDao memberDao;
+    private EmployeeDao employeeDao;
 
-
-    public List<Member> queryAll() throws Exception {
-        return memberDao.selectAll();
+    public List<Employee> queryAll() throws Exception {
+        return employeeDao.selectAll();
     }
 
-
-    public boolean add(Member member) throws Exception {
-        boolean r = memberDao.insert(member);
+    public boolean add(Employee employee) throws Exception {
+        boolean r = employeeDao.insert(employee);
         throw new Exception("自定义异常");
 //        return r;
     }
 
     public boolean remove(long id) throws Exception {
-        boolean r = memberDao.delete(id);
+        boolean r = employeeDao.delete(id);
         throw new Exception("自定义异常");
 //		return r;
     }
 
     public boolean modify(long id, String name) throws Exception {
-        return memberDao.update(id, name);
+        return employeeDao.update(id, name);
     }
 
     public boolean login(long id, String name) throws Exception {
