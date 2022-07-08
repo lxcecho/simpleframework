@@ -62,7 +62,7 @@ public class JoyDispatcherServletBak extends HttpServlet {
         //调用doGet或者doPost方法
 
         //提示信息
-        System.out.println("gupaoedu mvcframework is init");
+        System.out.println("EchoJoy mvcframework is init");
     }
 
 

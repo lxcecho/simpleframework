@@ -20,6 +20,7 @@
         <module>spring-simple</module>
         <module>springboot-simple</module>
         <module>springmvc-simple</module>
+        <module>spring-orm</module>
     </modules>
 
     <properties>
