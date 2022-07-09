@@ -8,58 +8,59 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * 泛型操作类.
- * @author Tom
+ *
+ * @author lxcecho 909231497@qq.com
+ * @since 21:34 09-07-2022
  */
 @SuppressWarnings("unchecked")
 public class GenericsUtils {
-	private static final Log logger = LogFactory.getLog(GenericsUtils.class);
- 	private GenericsUtils() {}
+    private static final Log logger = LogFactory.getLog(GenericsUtils.class);
 
-	/**
-	 * 通过反射,获得定义Class时声明的父类的范型参数的类型. 如public BookManager extends GenricManager<Book>
-	 * 
-	 * @param clazz
-	 *            The class to introspect
-	 * @return the first generic declaration, or <code>Object.class</code> if
-	 *         cannot be determined
-	 */
-	public static Class getSuperClassGenricType(Class clazz) {
-		return getSuperClassGenricType(clazz, 0);
-	}
+    private GenericsUtils() {
+    }
 
-	/**
-	 * 通过反射,获得定义Class时声明的父类的范型参数的类型. 如public BookManager extends GenricManager<Book>
-	 * 
-	 * @param clazz
-	 *            clazz The class to introspect
-	 * @param index
-	 *            the Index of the generic ddeclaration,start from 0.
-	 * @return the index generic declaration, or <code>Object.class</code> if
-	 *         cannot be determined
-	 */
-	public static Class getSuperClassGenricType(Class clazz, int index) {
+    /**
+     * 通过反射,获得定义Class时声明的父类的范型参数的类型. 如public BookManager extends GenricManager<Book>
+     *
+     * @param clazz The class to introspect
+     * @return the first generic declaration, or <code>Object.class</code> if
+     * cannot be determined
+     */
+    public static Class getSuperClassGenricType(Class clazz) {
+        return getSuperClassGenricType(clazz, 0);
+    }
 
-		Type genType = clazz.getGenericSuperclass();
+    /**
+     * 通过反射,获得定义Class时声明的父类的范型参数的类型. 如public BookManager extends GenricManager<Book>
+     *
+     * @param clazz clazz The class to introspect
+     * @param index the Index of the generic ddeclaration,start from 0.
+     * @return the index generic declaration, or <code>Object.class</code> if
+     * cannot be determined
+     */
+    public static Class getSuperClassGenricType(Class clazz, int index) {
 
-		if (!(genType instanceof ParameterizedType)) {
-			logger.debug(clazz.getSimpleName()
-					+ "'s superclass not ParameterizedType");
-			return Object.class;
-		}
+        Type genType = clazz.getGenericSuperclass();
 
-		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        if (!(genType instanceof ParameterizedType)) {
+            logger.debug(clazz.getSimpleName()
+                    + "'s superclass not ParameterizedType");
+            return Object.class;
+        }
 
-		if (index >= params.length || index < 0) {
-			logger.warn("Index: " + index + ", Size of " + clazz.getSimpleName()
-					+ "'s Parameterized Type: " + params.length);
-			return Object.class;
-		}
-		if (!(params[index] instanceof Class)) {
-			logger
-					.warn(clazz.getSimpleName()
-							+ " not set the actual class on superclass generic parameter");
-			return Object.class;
-		}
-		return (Class) params[index];
-	}
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+        if (index >= params.length || index < 0) {
+            logger.warn("Index: " + index + ", Size of " + clazz.getSimpleName()
+                    + "'s Parameterized Type: " + params.length);
+            return Object.class;
+        }
+        if (!(params[index] instanceof Class)) {
+            logger
+                    .warn(clazz.getSimpleName()
+                            + " not set the actual class on superclass generic parameter");
+            return Object.class;
+        }
+        return (Class) params[index];
+    }
 }

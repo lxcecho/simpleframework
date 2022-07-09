@@ -46,27 +46,30 @@ import com.alibaba.fastjson.util.FieldInfo;
 import com.alibaba.fastjson.util.TypeUtils;
 
 /**
- * BaseDao 扩展类,主要功能是支持自动拼装sql语句，必须继承方可使用
+ * BaseDao 扩展类,主要功能是支持自动拼装 sql 语句，必须继承方可使用
  * 需要重写和实现以下三个方法
- * //设定主键列
+ * // 设定主键列
  * private String getPKColumn() {return "id";}
- * //重写对象反转为Map的方法
+ * // 重写对象反转为Map的方法
  * protected Map<String, Object> parse(Object entity) {return utils.parse((Entity)entity);}
- * //重写结果反转为对象的方法
+ * // 重写结果反转为对象的方法
  * protected Entity mapRow(ResultSet rs, int rowNum) throws SQLException {return utils.parse(rs);}
  *
  * @author lxcecho 909231497@qq.com
  * @since 22:28 08-07-2022
  */
 public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializable> implements BaseDao<T, PK> {
+
     private Logger log = Logger.getLogger(BaseDaoSupport.class);
 
     private String tableName = "";
 
     private JdbcTemplate jdbcTemplateWrite;
+
     private JdbcTemplate jdbcTemplateReadOnly;
 
     private DataSource dataSourceReadOnly;
+
     private DataSource dataSourceWrite;
 
     private EntityOperation<T> op;
@@ -133,10 +136,10 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 将对象解析为Map
+     * 将对象解析为 Map
      *
-     * @param entity
-     * @return
+     * @param entity 对象
+     * @return Map 集合
      */
     protected Map<String, Object> parse(T entity) {
         return op.parse(entity);
@@ -144,14 +147,14 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
 
 
     /**
-     * 根据ID获取对象. 如果对象不存在，返回null.<br>
+     * 根据 ID 获取对象. 如果对象不存在，返回 null
      */
     protected T get(PK id) throws Exception {
         return (T) this.doLoad(id, this.op.rowMapper);
     }
 
     /**
-     * 获取全部对象. <br>
+     * 获取全部对象.
      *
      * @return 全部对象
      */
@@ -161,10 +164,10 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 插入并返回id
+     * 插入并返回 id
      *
-     * @param entity
-     * @return
+     * @param entity 实体对象
+     * @return 返回主键
      */
     public PK insertAndReturnId(T entity) throws Exception {
         return (PK) this.doInsertRuturnKey(parse(entity));
@@ -173,8 +176,8 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     /**
      * 插入一条记录
      *
-     * @param entity
-     * @return
+     * @param entity 实体对象
+     * @return 操作结果
      */
     public boolean insert(T entity) throws Exception {
         return this.doInsert(parse(entity));
@@ -182,12 +185,10 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
 
 
     /**
-     * 保存对象,如果对象存在则更新,否则插入.<br>
-     * </code>
-     * </pre>
+     * 保存对象,如果对象存在则更新,否则插入
      *
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException   异常
+     * @throws IllegalArgumentException 异常
      */
     protected boolean save(T entity) throws Exception {
         PK pkValue = (PK) op.pkField.get(entity);
@@ -201,10 +202,10 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     /**
      * 保存并返回新的id,如果对象存在则更新,否则插入
      *
-     * @param entity
-     * @return
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @param entity 实体对象
+     * @return 返回主键
+     * @throws IllegalAccessException   异常
+     * @throws IllegalArgumentException 异常
      */
     protected PK saveAndReturnId(T entity) throws Exception {
         Object o = op.pkField.get(entity);
@@ -222,37 +223,29 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 更新对象.<br>
+     * 更新对象
      * 例如：以下代码将对象更新到数据库
-     * <pre>
-     * 		<code>
      * User entity = service.get(1);
-     * entity.setName(&quot;zzz&quot;);
+     * entity.setName("zzz");
      * // 更新对象
      * service.update(entity);
-     * </code>
-     * </pre>
      *
      * @param entity 待更新对对象
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException   异常
+     * @throws IllegalArgumentException 异常
      */
     public boolean update(T entity) throws Exception {
         return this.doUpdate(op.pkField.get(entity), parse(entity)) > 0;
     }
 
     /**
-     * 使用SQL语句更新对象.<br>
+     * 使用SQL语句更新对象.
      * 例如：以下代码将更新id="0002"的name值更新为“张三”到数据库
-     * <pre>
-     * 		<code>
      * String name = "张三";
      * String id = "0002";
      * String sql = "UPDATE SET name = ? WHERE id = ?";
      * // 更新对象
      * service.update(sql,name,id)
-     * </code>
-     * </pre>
      *
      * @param sql  更新sql语句
      * @param args 参数对象
@@ -263,18 +256,14 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 使用SQL语句更新对象.<br>
+     * 使用SQL语句更新对象
      * 例如：以下代码将更新id="0002"的name值更新为“张三”到数据库
-     * <pre>
-     * 		<code>
      * Map<String,Object> map = new HashMap();
      * map.put("name","张三");
      * map.put("id","0002");
      * String sql = "UPDATE SET name = :name WHERE id = :id";
      * // 更新对象
      * service.update(sql,map)
-     * </code>
-     * </pre>
      *
      * @param sql      更新sql语句
      * @param paramMap 参数对象
@@ -285,21 +274,17 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 批量保存对象.<br>
+     * 批量保存对象
      * 例如：以下代码将对象保存到数据库
-     * <pre>
-     * 		<code>
-     * List&lt;Role&gt; list = new ArrayList&lt;Role&gt;();
-     * for (int i = 1; i &lt; 8; i++) {
-     * 	Role role = new Role();
-     * 	role.setId(i);
-     * 	role.setRolename(&quot;管理quot; + i);
-     * 	role.setPrivilegesFlag(&quot;1,2,3&quot;);
-     * 	list.add(role);
+     * List<Role> list = new ArrayList<>();
+     * for (int i = 1; i < 8; i++) {
+     * Role role = new Role();
+     * role.setId(i);
+     * role.setRoleName("管理" + i);
+     * role.setPrivilegesFlag("1,2,3");
+     * list.add(role);
      * }
      * service.insertAll(list);
-     * </code>
-     * </pre>
      *
      * @param list 待保存的对象List
      * @throws InvocationTargetException
@@ -377,13 +362,9 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
 
 
     /**
-     * 删除对象.<br>
+     * 删除对象
      * 例如：以下删除entity对应的记录
-     * <pre>
-     * 		<code>
      * service.delete(entity);
-     * </code>
-     * </pre>
      *
      * @param entity 待删除的实体对象
      */
@@ -392,18 +373,14 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 删除对象.<br>
+     * 删除对象
      * 例如：以下删除entity对应的记录
-     * <pre>
-     * 		<code>
      * service.deleteAll(entityList);
-     * </code>
-     * </pre>
      *
      * @param list 待删除的实体对象列表
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
+     * @throws InvocationTargetException 异常
+     * @throws IllegalArgumentException  异常
+     * @throws IllegalAccessException    异常
      */
     public int deleteAll(List<T> list) throws Exception {
         String pkName = op.pkField.getName();
@@ -431,13 +408,9 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 根据ID删除对象.如果有记录则删之，没有记录也不报异常<br>
+     * 根据ID删除对象.如果有记录则删之，没有记录也不报异常
      * 例如：以下删除主键唯一的记录
-     * <pre>
-     * 		<code>
      * service.deleteByPK(1);
-     * </code>
-     * </pre>
      *
      * @param id 序列化对id
      */
@@ -446,16 +419,11 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 根据ID删除对象.如果有记录则删之，没有记录也不报异常<br>
+     * 根据ID删除对象.如果有记录则删之，没有记录也不报异常
      * 例如：以下删除主键唯一的记录
-     * <pre>
-     * 		<code>
      * service.delete(1);
-     * </code>
-     * </pre>
      *
      * @param id 序列化对id
-     *
      * @return 删除是否成功
      */
 //	protected boolean delete(PK id)  throws Exception {
@@ -463,14 +431,10 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
 //	}
 
     /**
-     * 根据属性名查询出内容等于属性值的唯一对象，没符合条件的记录返回null.<br>
+     * 根据属性名查询出内容等于属性值的唯一对象，没符合条件的记录返回 null
      * 例如，如下语句查找id=5的唯一记录：
-     *
-     * <pre>
-     *     <code>
-     * User user = service.selectUnique(User.class, &quot;id&quot;, 5);
-     * </code>
-     * </pre>
+     * <p>
+     * User user = service.selectUnique(User.class, "id", 5);
      *
      * @param propertyName 属性名
      * @param value        属性值
@@ -484,12 +448,8 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
 
     /**
      * 根据主键判断对象是否存在. 例如：以下代码判断id=2的User记录是否存在
-     *
-     * <pre>
-     * 		<code>
+     * <p>
      * boolean user2Exist = service.exists(User.class, 2);
-     * </code>
-     * </pre>
      *
      * @param id 序列化对象id
      * @return 存在返回true，否则返回false
@@ -499,16 +459,12 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 查询满足条件的记录数，使用hql.<br>
+     * 查询满足条件的记录数，使用 hql
      * 例如：查询User里满足条件?name like "%ca%" 的记录数
+     * <p>
+     * long count = service.getCount("from User where name like ?", "%ca%");
      *
-     * <pre>
-     * 		<code>
-     * long count = service.getCount(&quot;from User where name like ?&quot;, &quot;%ca%&quot;);
-     * </code>
-     * </pre>
-     *
-     * @param queryRule
+     * @param queryRule 查询规则
      * @return 满足条件的记录数
      */
     protected long getCount(QueryRule queryRule) throws Exception {
@@ -523,8 +479,8 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     /**
      * 根据某个属性值倒序获得第一个最大值
      *
-     * @param propertyName
-     * @return
+     * @param propertyName 属性名
+     * @return 最大值
      */
     protected T getMax(String propertyName) throws Exception {
         QueryRule queryRule = QueryRule.getInstance();
@@ -540,18 +496,14 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     /**
      * 查询函数，使用查询规
      * 例如以下代码查询条件为匹配的数据
-     *
-     * <pre>
-     * 		<code>
+     * <p>
      * QueryRule queryRule = QueryRule.getInstance();
-     * queryRule.addLike(&quot;username&quot;, user.getUsername());
-     * queryRule.addLike(&quot;monicker&quot;, user.getMonicker());
-     * queryRule.addBetween(&quot;id&quot;, lowerId, upperId);
-     * queryRule.addDescOrder(&quot;id&quot;);
-     * queryRule.addAscOrder(&quot;username&quot;);
+     * queryRule.addLike("username;, user.getUsername());
+     * queryRule.addLike("moniker";, user.getMoniker());
+     * queryRule.addBetween("id";, lowerId, upperId);
+     * queryRule.addDescOrder("id");
+     * queryRule.addAscOrder("username");
      * list = userService.select(User.class, queryRule);
-     * </code>
-     * </pre>
      *
      * @param queryRule 查询规则
      * @return 查询出的结果List
@@ -581,7 +533,7 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 根据SQL语句查询符合条件的唯一对象，没符合条件的记录返回null.<br>
+     * 根据SQL语句查询符合条件的唯一对象，没符合条件的记录返回null
      *
      * @param sql   语句
      * @param pamam 为Map，key为属性名，value为属性值
@@ -610,7 +562,7 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 根据SQL语句查询符合条件的唯一对象，没符合条件的记录返回null.<br>
+     * 根据SQL语句查询符合条件的唯一对象，没符合条件的记录返回null
      *
      * @param sql  查询语句
      * @param args 为Object数组
@@ -639,7 +591,7 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 根据SQL语句查询符合条件的唯一对象，没符合条件的记录返回null.<br>
+     * 根据SQL语句查询符合条件的唯一对象，没符合条件的记录返回null
      *
      * @param sql       查询语句
      * @param listParam 属性值List
@@ -657,20 +609,16 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 分页查询函数，使用查询规则<br>
+     * 分页查询函数，使用查询规则
      * 例如以下代码查询条件为匹配的数据
-     *
-     * <pre>
-     * 		<code>
+     * <p>
      * QueryRule queryRule = QueryRule.getInstance();
-     * queryRule.addLike(&quot;username&quot;, user.getUsername());
-     * queryRule.addLike(&quot;monicker&quot;, user.getMonicker());
-     * queryRule.addBetween(&quot;id&quot;, lowerId, upperId);
-     * queryRule.addDescOrder(&quot;id&quot;);
-     * queryRule.addAscOrder(&quot;username&quot;);
+     * queryRule.addLike("username", user.getUsername());
+     * queryRule.addLike("moniker", user.getMoniker());
+     * queryRule.addBetween(id, lowerId, upperId);
+     * queryRule.addDescOrder("id");
+     * queryRule.addAscOrder("username");
      * page = userService.select(queryRule, pageNo, pageSize);
-     * </code>
-     * </pre>
      *
      * @param queryRule 查询规则
      * @param pageNo    页号,从1开始
@@ -749,17 +697,13 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 根据<属性名和属属性值Map查询符合条件的唯一对象，没符合条件的记录返回null.<br>
+     * 根据 < 属性名和属属性值Map查询符合条件的唯一对象，没符合条件的记录返回null
      * 例如，如下语句查找sex=1,age=18的所有记录：
-     *
-     * <pre>
-     *     <code>
+     * <p>
      * Map properties = new HashMap();
-     * properties.put(&quot;sex&quot;, &quot;1&quot;);
-     * properties.put(&quot;age&quot;, 18);
+     * properties.put(sex, 1);
+     * properties.put(age, 18);
      * User user = service.selectUnique(properties);
-     * </code>
-     * </pre>
      *
      * @param properties 属性值Map，key为属性名，value为属性值
      * @return 符合条件的唯一对象，没符合条件的记录返回null.
@@ -773,16 +717,12 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 根据查询规则查询符合条件的唯一象，没符合条件的记录返回null.<br>
-     * <pre>
-     *     <code>
+     * 根据查询规则查询符合条件的唯一象，没符合条件的记录返回null
      * QueryRule queryRule = QueryRule.getInstance();
-     * queryRule.addLike(&quot;username&quot;, user.getUsername());
-     * queryRule.addLike(&quot;monicker&quot;, user.getMonicker());
-     * queryRule.addBetween(&quot;id&quot;, lowerId, upperId);
+     * queryRule.addLike(username, user.getUsername());
+     * queryRule.addLike(moniker, user.getMoniker());
+     * queryRule.addBetween(id, lowerId, upperId);
      * User user = service.selectUnique(queryRule);
-     * </code>
-     * </pre>
      *
      * @param queryRule 查询规则
      * @return 符合条件的唯一对象，没符合条件的记录返回null.
@@ -802,9 +742,9 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     /**
      * 根据当前list进行相应的分页返回
      *
-     * @param objList
-     * @param pageNo
-     * @param pageSize
+     * @param objList  对象集合
+     * @param pageNo   页数
+     * @param pageSize 页面大小
      * @return Page
      */
     protected Page<T> pagination(List<T> objList, int pageNo, int pageSize) throws Exception {
@@ -821,7 +761,7 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 合并PO List对象.(如果POJO中的值为null,则继续使用PO中的值）
+     * 合并 PO List 对象.(如果POJO中的值为null,则继续使用PO中的值）
      *
      * @param pojoList 传入的POJO的List
      * @param poList   传入的PO的List
@@ -832,7 +772,7 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
     }
 
     /**
-     * 合并PO List对象.
+     * 合并 PO List 对象.
      *
      * @param pojoList   传入的POJO的List
      * @param poList     传入的PO的List
@@ -900,8 +840,10 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
      */
     private <T> T populate(ResultSet rs, T obj) {
         try {
-            ResultSetMetaData metaData = rs.getMetaData(); // 取得结果集的元元素
-            int colCount = metaData.getColumnCount(); // 取得所有列的个数
+            // 取得结果集的元元素
+            ResultSetMetaData metaData = rs.getMetaData();
+            // 取得所有列的个数
+            int colCount = metaData.getColumnCount();
             Field[] fields = obj.getClass().getDeclaredFields();
             for (int i = 0; i < fields.length; i++) {
                 Field f = fields[i];
@@ -937,8 +879,7 @@ public abstract class BaseDaoSupport<T extends Serializable, PK extends Serializ
      * @param args
      * @return 如查询不到，返回null，不抛异常；查询到多个，也抛出异常
      */
-    private <T> T selectForObject(String sql, RowMapper<T> mapper,
-                                  Object... args) {
+    private <T> T selectForObject(String sql, RowMapper<T> mapper, Object... args) {
         List<T> results = this.jdbcTemplateReadOnly().query(sql, mapper, args);
         return DataAccessUtils.singleResult(results);
     }

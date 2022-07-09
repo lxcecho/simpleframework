@@ -18,17 +18,17 @@ import java.util.*;
 public class JdbcTest {
 
     public static void main(String[] args) {
-        //ORM，完成了一部分，只完成了从 数据表到对象的映射
-        //对象到数据库表还没有
-        //我传的条件是一条SQL语句，我还是在面向SQL编程
+        // ORM，完成了一部分，只完成了从 数据表到对象的映射
+        // 对象到数据库表还没有
+        // 我传的条件是一条 SQL 语句，我还是在面向 SQL 编程
 //        List<Member> result = select("select * from t_member");
 
-        //这就是OO编程，ORM
+        // 这就是 OO 编程，ORM
         Member condition = new Member();
 //        condition.setName("TomCat");
 //        condition.setAge(2);
 
-        //"select * from t_member where name = 'Tom' and age = 19"
+        // "select * from t_member where name = 'Tom' and age = 19"
         List<?> result = select(condition);
         System.out.println(Arrays.toString(result.toArray()));
     }
@@ -38,17 +38,16 @@ public class JdbcTest {
 
         Class<?> entityClass = condition.getClass();
 
-
-        Connection con = null;          //连接对象
-        PreparedStatement pstm = null;  //语句集
-        ResultSet rs = null;            //结果集
+        Connection con = null;          // 连接对象
+        PreparedStatement pstm = null;  // 语句集
+        ResultSet rs = null;            // 结果集
 
 
         try {
-            //1、加载驱动类，千万不要忘记了
+            // 1、加载驱动类，千万不要忘记了
             Class.forName("com.mysql.jdbc.Driver");
-            //2、建立连接
-            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/gp-vip-spring-db-demo", "root", "123456");
+            // 2、建立连接
+            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/echo_joy", "root", "123456");
 
             Map<String, String> getFieldNameByColumn = new HashMap<String, String>();
             Map<String, String> getColumnByFieldName = new HashMap<String, String>();
@@ -62,7 +61,7 @@ public class JdbcTest {
                     getFieldNameByColumn.put(columnName, fieldName);
                     getColumnByFieldName.put(fieldName, columnName);
                 } else {
-                    //默认属性名就是列名
+                    // 默认属性名就是列名
                     getFieldNameByColumn.put(fieldName, fieldName);
                     getColumnByFieldName.put(fieldName, fieldName);
                 }
@@ -70,7 +69,7 @@ public class JdbcTest {
 
 
             StringBuffer sql = new StringBuffer();
-            //3、创建语句集
+            // 3、创建语句集
             Table table = entityClass.getAnnotation(Table.class);
             sql.append("select * from " + table.name() + " where 1=1 ");
             for (Field field : fields) {
@@ -82,13 +81,13 @@ public class JdbcTest {
                     } else {
                         sql.append(" and " + getColumnByFieldName.get(field.getName()) + " = " + value);
                     }
-                    //其他依次类推
+                    // 其他依次类推
                 }
             }
 
             pstm = con.prepareStatement(sql.toString());
 
-            //4、执行，获取结果集
+            // 4、执行，获取结果集
             rs = pstm.executeQuery();
 
             int columnCounts = rs.getMetaData().getColumnCount();
@@ -107,7 +106,7 @@ public class JdbcTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //6、关闭结果集、关闭语句集、关闭连接
+        // 6、关闭结果集、关闭语句集、关闭连接
         finally {
             try {
                 rs.close();
@@ -120,89 +119,88 @@ public class JdbcTest {
         return result;
     }
 
-//    private static List<Member> select(String sql) {
-//        List<Member> result = new ArrayList<>();
-//        Connection con = null;          //连接对象
-//        PreparedStatement pstm = null;  //语句集
-//        ResultSet rs = null;            //结果集
-//        try {
-//            //1、加载驱动类，千万不要忘记了
-//            Class.forName("com.mysql.jdbc.Driver");
-//            //2、建立连接
-//            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/gp-vip-spring-db-demo","root","123456");
-//            //3、创建语句集
-//            pstm =  con.prepareStatement(sql);
-//            //4、执行语句集
-//            rs = pstm.executeQuery();
-//            while (rs.next()){
-//                //纯粹的硬编码
-//                Member instance = new Member();
-//                instance.setId(rs.getLong("id"));
-//                instance.setName(rs.getString("name"));
-//                instance.setAge(rs.getInt("age"));
-//                instance.setAddr(rs.getString("addr"));
-//                result.add(instance);
-//            }
-//            //5、获取结果集
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        //6、关闭结果集、关闭语句集、关闭连接
-//        finally {
-//            try {
-//                rs.close();
-//                pstm.close();
-//                con.close();
-//            }catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }
-//        return result;
-//    }
+    private static List<Member> select02(String sql) {
+        List<Member> result = new ArrayList<>();
+        Connection con = null;          // 连接对象
+        PreparedStatement pstm = null;  // 语句集
+        ResultSet rs = null;            // 结果集
+        try {
+            // 1、加载驱动类，千万不要忘记了
+            Class.forName("com.mysql.jdbc.Driver");
+            // 2、建立连接
+            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/echo_joy", "root", "123456");
+            // 3、创建语句集
+            pstm = con.prepareStatement(sql);
+            // 4、执行语句集
+            rs = pstm.executeQuery();
+            while (rs.next()) {
+                // 纯粹的硬编码
+                Member instance = new Member();
+                instance.setId(rs.getLong("id"));
+                instance.setName(rs.getString("name"));
+                instance.setAge(rs.getInt("age"));
+                instance.setAddr(rs.getString("addr"));
+                result.add(instance);
+            }
+            // 5、获取结果集
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 6、关闭结果集、关闭语句集、关闭连接
+        finally {
+            try {
+                rs.close();
+                pstm.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 
+    private static List<Member> select(String sql) {
+        List<Member> result = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+        try {
+            // 1、加载驱动类
+            Class.forName("com.mysql.jdbc.Driver");
+            // 2、建立连接
+            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/echo_joy", "root", "123456");
+            // 3、创建语句集
+            pstm = con.prepareStatement(sql);
+            // 4、执行语句集
+            rs = pstm.executeQuery();
+            while (rs.next()) {
+                Member instance = mapperRow(rs, rs.getRow());
+                result.add(instance);
+            }
+            // 5、获取结果集
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 6、关闭结果集、关闭语句集、关闭连接
+        finally {
+            try {
+                rs.close();
+                pstm.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 
-//    private static List<Member> select(String sql) {
-//        List<Member> result = new ArrayList<>();
-//        Connection con = null;
-//        PreparedStatement pstm = null;
-//        ResultSet rs = null;
-//        try {
-//            //1、加载驱动类
-//            Class.forName("com.mysql.jdbc.Driver");
-//            //2、建立连接
-//            con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/gp-vip-spring-db-demo","root","123456");
-//            //3、创建语句集
-//            pstm =  con.prepareStatement(sql);
-//            //4、执行语句集
-//            rs = pstm.executeQuery();
-//            while (rs.next()){
-//                Member instance = mapperRow(rs,rs.getRow());
-//                result.add(instance);
-//            }
-//            //5、获取结果集
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        //6、关闭结果集、关闭语句集、关闭连接
-//        finally {
-//            try {
-//                rs.close();
-//                pstm.close();
-//                con.close();
-//            }catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }
-//        return result;
-//    }
-//
-//    private static Member mapperRow(ResultSet rs, int i) throws Exception {
-//        Member instance = new Member();
-//        instance.setId(rs.getLong("id"));
-//        instance.setName(rs.getString("name"));
-//        instance.setAge(rs.getInt("age"));
-//        instance.setAddr(rs.getString("addr"));
-//        return instance;
-//    }
+    private static Member mapperRow(ResultSet rs, int i) throws Exception {
+        Member instance = new Member();
+        instance.setId(rs.getLong("id"));
+        instance.setName(rs.getString("name"));
+        instance.setAge(rs.getInt("age"));
+        instance.setAddr(rs.getString("addr"));
+        return instance;
+    }
 
 }

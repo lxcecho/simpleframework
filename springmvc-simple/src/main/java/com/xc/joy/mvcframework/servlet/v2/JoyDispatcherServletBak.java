@@ -134,7 +134,7 @@ public class JoyDispatcherServletBak extends HttpServlet {
         //5、初始化HandlerMapping
         initHandlerMapping();
 
-        System.out.println("GP Spring framework is init.");
+        System.out.println("EchoJoy Spring framework is init.");
     }
 
     private void initHandlerMapping() {

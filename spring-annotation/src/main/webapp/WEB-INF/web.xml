@@ -6,8 +6,8 @@
 	version="2.4">
 	<display-name>EchoJoy Web Application</display-name>
 	<servlet>
-		<servlet-name>gpmvc</servlet-name>
-		<servlet-class>com.xc.joy.v2.servlet.GPDispatchServlet</servlet-class>
+		<servlet-name>echomvc</servlet-name>
+		<servlet-class>com.xc.joy.v2.servlet.EchoDispatchServlet</servlet-class>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
 			<param-value>application.properties</param-value>
@@ -16,7 +16,7 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>gpmvc</servlet-name>
+		<servlet-name>echomvc</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>

@@ -13,26 +13,45 @@ import javax.core.common.utils.StringUtils;
 
 
 /**
- * 根据QueryRule自动构建sql语句
+ * 根据 QueryRule 自动构建 sql 语句
  *
  * @author lxcecho 909231497@qq.com
  * @since 22:28 08-07-2022
  */
 public class QueryRuleSqlBuilder {
-    private int CURR_INDEX = 0; //记录参数所在的位置
-    private List<String> properties; //保存列名列表
-    private List<Object> values; //保存参数值列表
-    private List<Order> orders; //保存排序规则列表
+
+    /**
+     * 记录参数所在的位置
+     */
+    private int CURR_INDEX = 0;
+
+    /**
+     * 保存列名列表
+     */
+    private List<String> properties;
+
+    /**
+     * 保存参数值列表
+     */
+    private List<Object> values;
+
+    /**
+     * 保存排序规则列表
+     */
+    private List<Order> orders;
 
     private String whereSql = "";
+
     private String orderSql = "";
+
     private Object[] valueArr = new Object[]{};
+
     private Map<Object, Object> valueMap = new HashMap<Object, Object>();
 
     /**
      * 或得查询条件
      *
-     * @return
+     * @return 查询条件
      */
     public String getWhereSql() {
         return this.whereSql;
@@ -41,7 +60,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 获得排序条件
      *
-     * @return
+     * @return 排序条件
      */
     public String getOrderSql() {
         return this.orderSql;
@@ -50,7 +69,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 获得参数值列表
      *
-     * @return
+     * @return 参数值列表
      */
     public Object[] getValues() {
         return this.valueArr;
@@ -59,7 +78,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 获取参数列表
      *
-     * @return
+     * @return 参数列表
      */
     public Map<Object, Object> getValueMap() {
         return this.valueMap;
@@ -68,13 +87,14 @@ public class QueryRuleSqlBuilder {
     /**
      * 创建SQL构造器
      *
-     * @param queryRule
+     * @param queryRule 查询规则
      */
     public QueryRuleSqlBuilder(QueryRule queryRule) {
         CURR_INDEX = 0;
         properties = new ArrayList<String>();
         values = new ArrayList<Object>();
         orders = new ArrayList<Order>();
+
         for (QueryRule.Rule rule : queryRule.getRuleList()) {
             switch (rule.getType()) {
                 case QueryRule.BETWEEN:
@@ -129,18 +149,18 @@ public class QueryRuleSqlBuilder {
                     throw new IllegalArgumentException("type " + rule.getType() + " not supported.");
             }
         }
-        //拼装where语句
+        // 拼装where语句
         appendWhereSql();
-        //拼装排序语句
+        // 拼装排序语句
         appendOrderSql();
-        //拼装参数值
+        // 拼装参数值
         appendValues();
     }
 
     /**
-     * 去掉order
+     * 去掉 order
      *
-     * @param sql
+     * @param sql 入参
      * @return
      */
     protected String removeOrders(String sql) {
@@ -155,9 +175,9 @@ public class QueryRuleSqlBuilder {
     }
 
     /**
-     * 去掉select
+     * 去掉 select
      *
-     * @param sql
+     * @param sql 入参
      * @return
      */
     protected String removeSelect(String sql) {
@@ -170,9 +190,9 @@ public class QueryRuleSqlBuilder {
     }
 
     /**
-     * 处理like
+     * 处理 like
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processLike(QueryRule.Rule rule) {
         if (ArrayUtils.isEmpty(rule.getValues())) {
@@ -191,9 +211,9 @@ public class QueryRuleSqlBuilder {
     }
 
     /**
-     * 处理between
+     * 处理 between
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processBetween(QueryRule.Rule rule) {
         if ((ArrayUtils.isEmpty(rule.getValues()))
@@ -207,7 +227,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理 =
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processEqual(QueryRule.Rule rule) {
         if (ArrayUtils.isEmpty(rule.getValues())) {
@@ -219,7 +239,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理 <>
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processNotEqual(QueryRule.Rule rule) {
         if (ArrayUtils.isEmpty(rule.getValues())) {
@@ -231,7 +251,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理 >
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processGreaterThen(
             QueryRule.Rule rule) {
@@ -244,7 +264,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理>=
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processGreaterEqual(
             QueryRule.Rule rule) {
@@ -257,7 +277,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理<
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processLessThen(QueryRule.Rule rule) {
         if (ArrayUtils.isEmpty(rule.getValues())) {
@@ -269,7 +289,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理<=
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processLessEqual(
             QueryRule.Rule rule) {
@@ -282,7 +302,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理  is null
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processIsNull(QueryRule.Rule rule) {
         add(rule.getAndOr(), rule.getPropertyName(), "is null", null);
@@ -291,7 +311,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理 is not null
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processIsNotNull(QueryRule.Rule rule) {
         add(rule.getAndOr(), rule.getPropertyName(), "is not null", null);
@@ -300,7 +320,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理  <>''
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processIsNotEmpty(QueryRule.Rule rule) {
         add(rule.getAndOr(), rule.getPropertyName(), "<>", "''");
@@ -309,7 +329,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理 =''
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processIsEmpty(QueryRule.Rule rule) {
         add(rule.getAndOr(), rule.getPropertyName(), "=", "''");
@@ -317,10 +337,10 @@ public class QueryRuleSqlBuilder {
 
 
     /**
-     * 处理in和not in
+     * 处理 in 和 not in
      *
-     * @param rule
-     * @param name
+     * @param rule 规则入参
+     * @param name 参数名
      */
     private void inAndNotIn(QueryRule.Rule rule, String name) {
         if (ArrayUtils.isEmpty(rule.getValues())) {
@@ -366,7 +386,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理 not in
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processNotIN(QueryRule.Rule rule) {
         inAndNotIn(rule, "not in");
@@ -375,7 +395,7 @@ public class QueryRuleSqlBuilder {
     /**
      * 处理 in
      *
-     * @param rule
+     * @param rule 规则入参
      */
     private void processIN(QueryRule.Rule rule) {
         inAndNotIn(rule, "in");
@@ -407,7 +427,7 @@ public class QueryRuleSqlBuilder {
 
 
     /**
-     * 加入到sql查询规则队列
+     * 加入到 sql 查询规则队列
      *
      * @param andOr and 或者 or
      * @param key   列名

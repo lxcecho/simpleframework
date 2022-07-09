@@ -1,8 +1,8 @@
 package com.xc.joy.orm;
 
 import com.alibaba.fastjson.JSON;
-import com.xc.joy.orm.demo.dao.MemberDao;
-import com.xc.joy.orm.demo.dao.OrderDao;
+import com.xc.joy.orm.dao.MemberDao;
+import com.xc.joy.orm.dao.OrderDao;
 import com.xc.joy.orm.entity.Member;
 import com.xc.joy.orm.entity.Order;
 import org.junit.Test;

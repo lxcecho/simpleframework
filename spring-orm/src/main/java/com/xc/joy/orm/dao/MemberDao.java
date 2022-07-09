@@ -1,4 +1,4 @@
-package com.xc.joy.orm.demo.dao;
+package com.xc.joy.orm.dao;
 
 import com.xc.joy.orm.entity.Member;
 import com.xc.joy.orm.framework.BaseDaoSupport;

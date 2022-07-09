@@ -139,7 +139,7 @@ public class EchoDispatcherServlet extends HttpServlet {
         // 初始化 Spring MVC 九大组件
         initStrategies(applicationContext);
 
-        System.out.println("GP Spring framework is init.");
+        System.out.println("EchoJoy Spring framework is init.");
     }
 
     /**

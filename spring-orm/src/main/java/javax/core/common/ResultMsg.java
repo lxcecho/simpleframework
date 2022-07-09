@@ -3,59 +3,77 @@ package javax.core.common;
 import java.io.Serializable;
 
 
-//最底层设计
+/**
+ * 最底层设计
+ *
+ * @param <T>
+ * @author lxcecho 909231497@qq.com
+ * @since 21:34 09-07-2022
+ */
 public class ResultMsg<T> implements Serializable {
 
-	private static final long serialVersionUID = 2635002588308355785L;
+    private static final long serialVersionUID = 2635002588308355785L;
 
-	private int status; //状态码，系统的返回码
-	private String msg;  //状态码的解释
-	private T data;  //放任意结果
+    /**
+     * 状态码，系统的返回码
+     */
+    private int status;
 
-	public ResultMsg() {}
-	
-	public ResultMsg(int status) {
-		this.status = status;
-	}
+    /**
+     * 状态码的解释
+     */
+    private String msg;
 
-	public ResultMsg(int status, String msg) {
-		this.status = status;
-		this.msg = msg;
-	}
-	
-	public ResultMsg(int status, T data) {
-		this.status = status;
-		this.data = data;
-	}
+    /**
+     * 放任意结果
+     */
+    private T data;
 
-	public ResultMsg(int status, String msg, T data) {
-		this.status = status;
-		this.msg = msg;
-		this.data = data;
-	}
+    public ResultMsg() {
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    public ResultMsg(int status) {
+        this.status = status;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public ResultMsg(int status, String msg) {
+        this.status = status;
+        this.msg = msg;
+    }
 
-	public String getMsg() {
-		return msg;
-	}
+    public ResultMsg(int status, T data) {
+        this.status = status;
+        this.data = data;
+    }
 
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
+    public ResultMsg(int status, String msg, T data) {
+        this.status = status;
+        this.msg = msg;
+        this.data = data;
+    }
 
-	public T getData() {
-		return data;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public void setData(T data) {
-		this.data = data;
-	}
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
 
 }

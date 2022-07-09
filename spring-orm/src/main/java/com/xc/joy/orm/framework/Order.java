@@ -2,14 +2,22 @@ package com.xc.joy.orm.framework;
 
 
 /**
- * sql排序组件
+ * sql 排序组件
  *
  * @author lxcecho 909231497@qq.com
  * @since 22:28 08-07-2022
  */
 public class Order {
-    private boolean ascending; //升序还是降序
-    private String propertyName; //哪个字段升序，哪个字段降序
+
+    /**
+     * 升序还是降序
+     */
+    private boolean ascending;
+
+    /**
+     * 哪个字段升序，哪个字段降序
+     */
+    private String propertyName;
 
     public String toString() {
         return propertyName + ' ' + (ascending ? "asc" : "desc");

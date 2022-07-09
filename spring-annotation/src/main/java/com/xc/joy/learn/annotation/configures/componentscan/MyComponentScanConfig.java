@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(value = "com.xc.joy.learn",
 //                includeFilters = {@Filter(type = FilterType.ANNOTATION,value = {Controller.class})},
 //                includeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE,value = {MyController.class})},
-//                  includeFilters = {@Filter(type = FilterType.CUSTOM,value = {GPTypeFilter.class})},
+//                  includeFilters = {@Filter(type = FilterType.CUSTOM,value = {EchoTypeFilter.class})},
                 useDefaultFilters = false)
 public class MyComponentScanConfig {
 
