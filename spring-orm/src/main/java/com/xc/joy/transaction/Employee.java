@@ -13,7 +13,7 @@ import javax.persistence.Table;
  * @since 22:38 08-07-2022
  */
 @Entity
-@Table(name = "t_member")
+@Table(name = "t_employee")
 @Data
 public class Employee implements Serializable {
 
