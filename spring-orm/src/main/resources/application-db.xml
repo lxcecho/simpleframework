@@ -34,6 +34,12 @@
         <property name="password" value="${mysql.jdbc.password}"/>
     </bean>
 
+    <bean id="dataSource2019" parent="datasourcePool">
+        <property name="driverClassName" value="${db2022.mysql.jdbc.driverClassName}" />
+        <property name="url" value="${db2022.mysql.jdbc.url}" />
+        <property name="username" value="${db2022.mysql.jdbc.username}" />
+        <property name="password" value="${db2022.mysql.jdbc.password}" />
+    </bean>
 
     <bean id="dynamicDataSourceEntry" class="javax.core.common.jdbc.datasource.DynamicDataSourceEntry"/>
 
@@ -42,7 +48,7 @@
         <property name="targetDataSources">
             <map>
                 <entry key="DB_2020" value-ref="dataSource"></entry>
-                <!--<entry key="DB_2019" value-ref="dataSource2019"></entry>-->
+                <entry key="DB_2022" value-ref="dataSource2019"></entry>
             </map>
         </property>
         <property name="defaultTargetDataSource" ref="dataSource"/>

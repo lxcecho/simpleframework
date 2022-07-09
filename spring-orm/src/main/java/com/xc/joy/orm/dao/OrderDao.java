@@ -36,10 +36,14 @@ public class OrderDao extends BaseDaoSupport<Order, Long> {
     }
 
     /**
+     * 插入数据
+     *
+     * @param order
+     * @return
      * @throws Exception
      */
     public boolean insertOne(Order order) throws Exception {
-        //约定优于配置
+        // 约定优于配置
         Date date = null;
         if (order.getCreateTime() == null) {
             date = new Date();
@@ -57,6 +61,5 @@ public class OrderDao extends BaseDaoSupport<Order, Long> {
         order.setId(orderId);
         return orderId > 0;
     }
-
 
 }

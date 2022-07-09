@@ -32,14 +32,14 @@ public class MemberDao extends BaseDaoSupport<Member, Long> {
 
     public List<Member> selectAll() throws Exception {
         QueryRule queryRule = QueryRule.getInstance();
-        queryRule.andLike("name", "Mic%");
+        queryRule.andLike("name", "lxc%");
         return super.select(queryRule);
     }
 
 
     public Page<Member> selectForPage(int pageNo, int pageSize) throws Exception {
         QueryRule queryRule = QueryRule.getInstance();
-        queryRule.andLike("name", "Tom%");
+        queryRule.andLike("name", "lxc%");
         Page<Member> page = super.select(queryRule, pageNo, pageSize);
         return page;
     }

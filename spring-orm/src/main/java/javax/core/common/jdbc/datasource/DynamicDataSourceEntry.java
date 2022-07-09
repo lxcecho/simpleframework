@@ -11,7 +11,9 @@ import org.aspectj.lang.JoinPoint;
  */
 public class DynamicDataSourceEntry {
 
-    // 默认数据源
+    /**
+     * 默认数据源
+     */
     public final static String DEFAULT_SOURCE = null;
 
     private final static ThreadLocal<String> local = new ThreadLocal<String>();
@@ -35,9 +37,9 @@ public class DynamicDataSourceEntry {
     /**
      * 还原指定切面的数据源
      *
-     * @param joinPoint
+     * @param joinPoint 连接点
      */
-    public void restore(JoinPoint join) {
+    public void restore(JoinPoint joinPoint) {
         local.set(DEFAULT_SOURCE);
     }
 
@@ -51,16 +53,16 @@ public class DynamicDataSourceEntry {
     /**
      * 设置已知名字的数据源
      *
-     * @param dataSource
+     * @param dataSource 数据源
      */
-    public void set(String source) {
-        local.set(source);
+    public void set(String dataSource) {
+        local.set(dataSource);
     }
 
     /**
      * 根据年份动态设置数据源
      *
-     * @param year
+     * @param year 年份
      */
     public void set(int year) {
         local.set("DB_" + year);
